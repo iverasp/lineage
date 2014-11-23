@@ -42,6 +42,7 @@ def user(request, uid):
     )
     if request.method == 'POST':
         form = UserForm(data=request.POST, instance=user)
+        print form.errors
         if form.is_valid():
             print "valid!"
             # logic for groups membership
