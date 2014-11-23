@@ -13,8 +13,6 @@ $(window).on('load', function () {
 
   <form role="form" method="post" action="">
     {% csrf_token %}
-    <!-- {{ form }}  form for dev -->
-
     <div class="row">
       <div class="col-sm-12">
         <p><h3 id="id_full_name"></h3></p>
@@ -103,11 +101,6 @@ $(window).on('load', function () {
                     <label for="id_home_directory">Home directory</label>
                     {{ form.home_directory }}
                   </div>
-                  <div class="form-group">
-                    <label for="id_dn">DN</label>
-                    {{ form.dn }}
-                  </div>
-
                 </div>
                 <div class="col-sm-6">
                 </div>

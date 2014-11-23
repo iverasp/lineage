@@ -3,9 +3,11 @@ from django.forms import ModelForm, ModelChoiceField, \
 from models import LdapUser, LdapGroup
 
 class UserForm(ModelForm):
+
     group = ModelChoiceField(
         queryset=LdapGroup.objects.all(),
-        to_field_name='gid'
+        to_field_name='gid',
+        empty_label=None
     )
 
     groups = ModelMultipleChoiceField(
@@ -20,26 +22,18 @@ class UserForm(ModelForm):
     ) # TODO: this setting is not stored anywhere. how to solve?
 
     enable_samba = BooleanField(
-        initial=True,
         required=False
     ) # TODO: find users samba settings here
 
     class Meta:
         model = LdapUser
         fields = '__all__'
-        # group is defined above
-        exclude = ['group']
         '''
-        fields = [
-            'uid',
-            'group',
-            'username',
-            'first_name',
-            'last_name',
-            'email'
-            ]
+        group is defined above
+        dn needs to be blank in order to save new object
         '''
-
+        exclude = ['group', 'dn']
+        #exclude = ['dn']
 
     def __init__(self, *args, **kwargs):
         super(UserForm, self).__init__(*args, **kwargs)
