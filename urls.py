@@ -10,6 +10,7 @@ urlpatterns = patterns(
     '',
     url(r'^$', 'ldap_manager.views.index', name='index'),
     url(r'^users/', 'ldap_manager.views.users', name='users'),
+    url(r'^add_user/', 'ldap_manager.views.add_user', name='add_user'),
     url(r'^user/(?P<uid>\w{0,50})/$', 'ldap_manager.views.user', name='user'),
     url(r'^admin/doc/', include('django.contrib.admindocs.urls')),
     url(r'^admin/', include(admin.site.urls)),
