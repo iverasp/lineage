@@ -1,0 +1,93 @@
+{% extends 'base.html' %}
+{% block head %}
+<script>
+$(window).on('load', function () {
+  $('#id_full_name').html($('#id_first_name').val() + ' ' + $('#id_last_name').val());
+});
+</script>
+{% endblock head %}
+
+{% block content %}
+
+<div class="container-liquid">
+
+  <form role="form" method="post" action="">
+    {% csrf_token %}
+    <!-- {{ form }}  form for dev -->
+
+    <div class="row">
+      <div class="col-sm-12">
+        <p><h3 id="id_full_name"></h3></p>
+        <!- - show user image. allow changing - ->
+      </div>
+      <div class="col-sm-6">
+        <div class="form-group">
+          <label for="id_username">Username</label>
+          {{ form.username }}
+        </div>
+        <div class="form-group">
+          <label for="id_first_name">First name</label>
+          {{ form.first_name }}
+        </div>
+        <div class="form-group">
+          <label for="id_last_name">Last name</label>
+          {{ form.last_name }}
+        </div>
+        <div class="form-group">
+          <label for="id_email">Email</label>
+          {{ form.email }}
+        </div>
+        <div class="form-group">
+          <label for="id_uid">UID</label>
+          <!- - these two elements should be displayed inline - ->
+          {{ form.uid }}
+          <label for="id_auto_uid">Auto</label>
+          {{ form.auto_uid }}
+        </div>
+        <div class="form-group">
+          <label for="id_enable_samba">Enable samba</label>
+          {{ form.enable_samba }}
+        </div>
+
+      </div>
+      <div class="col-sm-6">
+        <div class="form-group">
+          <label for="id_group">Primary group</label>
+          {{ form.group }}
+        </div>
+        <label for="id_groups">Additional groups</label>
+        <!- - make as high as the rest of the div - ->
+        {{ form.groups }}
+      </div>
+    </div>
+
+    <div class="row">
+      <div class="form-group">
+        <input type="submit" value="Submit" />
+      </div>
+    </div>
+
+    <div class="row">
+      <div class="panel-group" id="accordion">
+        <div class="panel panel-default" id="panel1">
+          <div class="panel-heading">
+            <h4 class="panel-title">
+              <a data-toggle="collapse" data-target="#collapseOne"
+              href="#collapseOne">
+              Addition information
+              </a>
+            </h4>
+          </div>
+          <div id="collapseOne" class="panel-collapse collapse">
+            <div class="panel-body">
+              Anim pariatur cliche reprehenderit, enim eiusmod high life accusamus terry richardson ad squid. 3 wolf moon officia aute, non cupidatat skateboard dolor brunch. Food truck quinoa nesciunt laborum eiusmod. Brunch 3 wolf moon tempor, sunt aliqua put a bird on it squid single-origin coffee nulla assumenda shoreditch et. Nihil anim keffiyeh helvetica, craft beer labore wes anderson cred nesciunt sapiente ea proident. Ad vegan excepteur butcher vice lomo. Leggings occaecat craft beer farm-to-table, raw denim aesthetic synth nesciunt you probably haven't heard of them accusamus labore sustainable VHS.
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </form>
+
+</div>
+
+{% endblock content %}

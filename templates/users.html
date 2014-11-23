@@ -1,0 +1,22 @@
+{% extends 'base.html' %}
+{% block content %}
+
+<div class="row row-md-height">
+    <div class="table-responsive">
+      <table class="table table-striped table-hover">
+        <tr>
+          <td><strong>Name</strong></td>
+          <td><strong>Home directory</strong></td>
+        </tr>
+        {% for user in user_list %}
+        <tr style="cursor: pointer;"
+        onclick="document.location = '{% url 'user' user.uid %}'">
+          <td>{{ user }}</td>
+          <td>{{ user.home_directory }}</td>
+        </td>
+        {% endfor %}
+      </table>
+    </div>
+  </div>
+
+{% endblock content %}
