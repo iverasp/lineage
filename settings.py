@@ -1,6 +1,7 @@
 # Django settings for django-ldapdb project.
 import os
 import ldap
+from string import Template
 
 DEBUG = True
 TEMPLATE_DEBUG = DEBUG
@@ -100,3 +101,11 @@ INSTALLED_APPS = (
     'django.contrib.admin',
     'django.contrib.staticfiles',
 )
+
+SHELLS = (
+    ('/bin/false', 'false'),
+    ('/bin/bash', 'bash'),
+    ('/bin/zsh', 'zsh'),
+)
+
+DEFAULT_HOME = Template('/home/$username[0]$username[1]/$username')

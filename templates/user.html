@@ -2,7 +2,27 @@
 {% block head %}
 <script>
 $(window).on('load', function () {
+  {% if form.errors %}
+    {% for field in form %}
+      {% if field.errors %}
+        $('#{{ field.auto_id }}').parent().addClass('has-error');
+      {% endif %}
+    {% endfor %}
+  {% endif %}
+
   $('#id_full_name').html($('#id_first_name').val() + ' ' + $('#id_last_name').val());
+  $('#id_first_name, #id_last_name').on('keyup', function() {
+    $('#id_full_name').html($('#id_first_name').val() + ' ' + $('#id_last_name').val());
+  });
+
+  if ($('#id_auto_uid').prop('checked')) {
+    $('#id_auto_uid').parent().addClass('active');
+    $('#id_uid').prop('disabled', true);
+  }
+
+  $('#id_auto_uid').change( function() {
+    $('#id_uid').prop('disabled', $(this).prop('checked'));
+  });
 });
 </script>
 {% endblock head %}
@@ -11,70 +31,134 @@ $(window).on('load', function () {
 
 <div class="container-liquid">
 
-  <form role="form" method="post" action="">
+  <form class="form-horizontal" role="form" method="post" action="">
     {% csrf_token %}
-    <div class="row">
+
+    {% if form.errors %}
+    <div class="alert alert-danger">
+      <button type="button" class="close" data-dismiss="alert">×</button>
+      {% for field in form %}
+      {% if field.errors %}
+      <li style="list-style-type:none;">{{field.name }}: {{ field.errors|striptags }}</li>
+      {% endif %}
+      {% endfor %}
+    </div>
+    {% endif %}
+
+    <div class="col-sm-12">
+      <div class="row">
+        <div class="col-sm-2">
+          <!- - show user image. allow changing - ->
+          {% if not form.photo.value %}
+          <img class="img-rounded" width="100" height="100" src="http://www.livehappy.com/sites/default/files/styles/author/public/default_images/default_profile.png"/>
+          {% else %}
+          <img class="img-rounded" width="100" height="100" src="data:image/jpeg;base64, {{ form.photo.value }}"/>
+          {% endif %}
+        </div>
+        <div class="col-sm-10">
+          <h3 id="id_full_name"></h3>
+          {% if user %}
+          <h5>{{ user.dn }}</h5>
+          <a href="javascript:void(0);" onclick="$('#passModal').modal('show'); return;">Change password</a>
+          {% endif %}
+        </div>
+      </div>
+      <hr>
+    </div> <!-- end div for profile summary -->
+
+
+
+    <div class="col-sm-6">
+
+      <div class="row">
+        <div class="form-group">
+          <label class="col-sm-3 control-label" for="id_username">Username</label>
+          <div class="col-sm-9">{{ form.username }}</div>
+        </div>
+      </div>
+
+      <div class="row">
+        <div class="form-group">
+          <label class="col-sm-3 control-label" for="id_first_name">First name</label>
+          <div class="col-sm-9">{{ form.first_name }}</div>
+        </div>
+      </div>
+
+      <div class="row">
+        <div class="form-group">
+          <label class="col-sm-3 control-label" for="id_last_name">Last name</label>
+          <div class="col-sm-9">{{ form.last_name }}</div>
+        </div>
+      </div>
+
+      <div class="row">
+        <div class="form-group">
+          <label class="col-sm-3 control-label" for="id_email">Email</label>
+          <div class="col-sm-9">{{ form.email }}</div>
+        </div>
+      </div>
+
+      <div class="row">
+        <div class="form-group row">
+          <label class="col-sm-3 control-label" for="id_uid">UID</label>
+          <div class="col-sm-6">{{ form.uid }}</div>
+          <!-- col size below messes up layout -->
+          <div class="col-sm-3">
+            <div data-toggle="buttons">
+              <label class="btn btn-default control-label pull-right" for="id_auto_uid">
+                {{ form.auto_uid }} Auto
+              </label>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="row">
+        <div class="form-group">
+          <label class="col-sm-3 control-label" for="id_login_shell">Shell</label>
+          <div class="col-sm-9">{{ form.login_shell }}</div>
+        </div>
+      </div>
+
+      <!-- samba stuff
+      <div class="row">
+        <div class="form-group">
+          <label class="col-sm-3 control-label" for="id_enable_samba">Enable samba</label>
+          <div class="col-sm-9">{{ form.enable_samba }}</div>
+        </div>
+      </div>
+      end samba stuff -->
+
+    </div> <!-- end first column -->
+
+    <div class="col-sm-6">
+
+      <div class="row">
+        <div class="form-group">
+          <label class="col-sm-4 control-label" for="id_group">Primary group</label>
+          <div class="col-sm-8">{{ form.group }}</div>
+        </div>
+      </div>
+
+      <div class="row">
+        <div class="form-group">
+          <label class="col-sm-4 control-label" for="id_groups">Additional groups</label>
+          <!- - make as high as the rest of the div - ->
+          <div class="col-sm-8">{{ form.groups }}</div>
+        </div>
+      </div>
+
+    </div> <!-- end second column -->
+
       <div class="col-sm-12">
-        <h3 id="id_full_name"></h3>
-        {% if not form.photo.value %}
-        <img class="pull-right" src="http://www.livehappy.com/sites/default/files/styles/author/public/default_images/default_profile.png"/>
-        {% else %}
-        <img class="pull-right" src="data:image/jpeg;base64, {{ form.photo.value }}"/>
-        {% endif %}
-        <!- - show user image. allow changing - ->
+        <div class="form-group">
+          <input class="btn btn-default pull-right" type="submit" value="Submit" />
+        </div>
+        <hr>
       </div>
-      <div class="col-sm-6">
-        <div class="form-group">
-          <label for="id_username">Username</label>
-          {{ form.username }}
-        </div>
-        <div class="form-group">
-          <label for="id_first_name">First name</label>
-          {{ form.first_name }}
-        </div>
-        <div class="form-group">
-          <label for="id_last_name">Last name</label>
-          {{ form.last_name }}
-        </div>
-        <div class="form-group">
-          <label for="id_email">Email</label>
-          {{ form.email }}
-        </div>
-        <div class="form-group">
-          <label for="id_uid">UID</label>
-          <!- - these two elements should be displayed inline - ->
-          {{ form.uid }}
-          <label for="id_auto_uid">Auto</label>
-          {{ form.auto_uid }}
-        </div>
-        <div class="form-group">
-          <label for="id_login_shell">Shell</label>
-          {{ form.login_shell }}
-        </div>
-        <div class="form-group">
-          <label for="id_enable_samba">Enable samba</label>
-          {{ form.enable_samba }}
-        </div>
 
-      </div>
-      <div class="col-sm-6">
-        <div class="form-group">
-          <label for="id_group">Primary group</label>
-          {{ form.group }}
-        </div>
-        <label for="id_groups">Additional groups</label>
-        <!- - make as high as the rest of the div - ->
-        {{ form.groups }}
-      </div>
-    </div>
 
-    <div class="row">
-      <div class="form-group">
-        <input type="submit" value="Submit" />
-      </div>
-    </div>
-
-    <div class="row">
+    <div class="col-sm-12">
       <div class="panel-group" id="accordion">
         <div class="panel panel-default" id="panel1">
           <div class="panel-heading">
@@ -82,42 +166,57 @@ $(window).on('load', function () {
               <a data-toggle="collapse" data-target="#collapseOne"
               href="#collapseOne">
               Addition information
-              </a>
-            </h4>
-          </div>
-          <div id="collapseOne" class="panel-collapse collapse in">
-            <div class="panel-body">
+            </a>
+          </h4>
+        </div>
+        <div id="collapseOne" class="panel-collapse collapse in">
+          <div class="panel-body">
 
-              <div class="row">
-                <div class="col-sm-6">
-                  <div class="form-group">
-                    <label for="id_password">Password</label>
-                    {{ form.password }}
-                  </div>
-                  <div class="form-group">
-                    <label for="id_gecos">GECOS</label>
-                    {{ form.gecos }}
-                  </div>
-                  <div class="form-group">
-                    <label for="id_full_name">Full name</label>
-                    {{ form.full_name }}
-                  </div>
-                  <div class="form-group">
-                    <label for="id_home_directory">Home directory</label>
-                    {{ form.home_directory }}
-                  </div>
-                </div>
-                <div class="col-sm-6">
+            <div class="row">
+              <div class="col-sm-6">
+                <div class="form-group">
+                  <label for="id_home_directory">Home directory</label>
+                  {{ form.home_directory }}
                 </div>
               </div>
-
+              <div class="col-sm-6">
+              </div>
             </div>
+
           </div>
         </div>
       </div>
     </div>
-  </form>
+  </div>
+</form>
 
 </div>
+
+<div class="modal fade" id="passModal" tabindex="-1" role="dialog" aria-labelledby="passModalLabel" aria-hidden="true">
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <div class="modal-header">
+        <button type="button" class="close" data-dismiss="modal"><span aria-hidden="true">&times;</span><span class="sr-only">Close</span></button>
+        <h4 class="modal-title">Change password</h4>
+      </div>
+      <form role="form-horizontal" method='post' action='{% url 'change_password' user.uid %}'>
+        <div class="modal-body">
+          <div class="form-group" style="text-align:center;">
+            {% csrf_token %}
+            <label for="id_password">New password</label>
+            {{ update_password_form.password }}
+          </div>
+
+        </div>
+
+        <div class="modal-footer">
+          <div class="form-group">
+            <input class="btn btn-default" type="submit" value="Submit"/>
+          </div>
+        </div>
+      </form>
+    </div><!-- /.modal-content -->
+  </div><!-- /.modal-dialog -->
+</div><!-- /.modal -->
 
 {% endblock content %}

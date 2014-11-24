@@ -33,6 +33,7 @@
 from ldapdb.models.fields import (CharField, DateField, ImageField, ListField,
                                   IntegerField, FloatField)
 import ldapdb.models
+from passlib.hash import ldap_sha512_crypt
 
 
 class LdapUser(ldapdb.models.Model):
@@ -46,7 +47,7 @@ class LdapUser(ldapdb.models.Model):
     # inetOrgPerson
     first_name = CharField(db_column='givenName')
     last_name = CharField(db_column='sn')
-    full_name = CharField(db_column='cn')
+    full_name = CharField(db_column='cn', blank=True)
     email = CharField(db_column='mail')
     phone = CharField(db_column='telephoneNumber', blank=True)
     mobile_phone = CharField(db_column='mobile', blank=True)
@@ -55,11 +56,11 @@ class LdapUser(ldapdb.models.Model):
     # posixAccount
     uid = IntegerField(db_column='uidNumber', unique=True)
     group = IntegerField(db_column='gidNumber')
-    gecos = CharField(db_column='gecos')
+    gecos = CharField(db_column='gecos', blank=True)
     home_directory = CharField(db_column='homeDirectory')
     login_shell = CharField(db_column='loginShell', default='/bin/bash')
     username = CharField(db_column='uid', primary_key=True)
-    password = CharField(db_column='userPassword')
+    password = CharField(db_column='userPassword', blank=True)
 
     date_of_birth = DateField(db_column='birthday', blank=True)
     latitude = FloatField(db_column='latitude', blank=True)
@@ -69,6 +70,15 @@ class LdapUser(ldapdb.models.Model):
 
     def __unicode__(self):
         return self.full_name
+
+    def set_password(self, password):
+        self.password = ldap_sha512_crypt.encrypt(password)
+        self.save()
+
+    def check_password(self, password):
+        return ldap_sha512_crypt.verify(password, self.password)
+
+
 
 
 class LdapGroup(ldapdb.models.Model):
