@@ -15,7 +15,12 @@ $(window).on('load', function () {
     {% csrf_token %}
     <div class="row">
       <div class="col-sm-12">
-        <p><h3 id="id_full_name"></h3></p>
+        <h3 id="id_full_name"></h3>
+        {% if not form.photo.value %}
+        <img class="pull-right" src="http://www.livehappy.com/sites/default/files/styles/author/public/default_images/default_profile.png"/>
+        {% else %}
+        <img class="pull-right" src="data:image/jpeg;base64, {{ form.photo.value }}"/>
+        {% endif %}
         <!- - show user image. allow changing - ->
       </div>
       <div class="col-sm-6">
