@@ -122,7 +122,7 @@ class UpdatePasswordForm(Form):
 class GroupForm(ModelForm):
 
     usernames = ModelMultipleChoiceField(
-        queryset = LdapUser.objects.all(),
+        queryset = LdapUser.objects.none(),
         to_field_name='uid',
         required=False
     )
@@ -137,16 +137,17 @@ class GroupForm(ModelForm):
         exclude = ['dn']
 
     def __init__(self, *args, **kwargs):
+        obj = kwargs.get('instance', None)
+        gid = None
+        if obj: gid = obj.gid
         super(GroupForm, self).__init__(*args, **kwargs)
-        gid = kwargs.pop('gid', None)
+
         if gid: # dont know what to do here yet...
             self.fields['usernames'].queryset = LdapUser.objects.filter(
                 uid__in=LdapGroup.objects.filter(
                     gid=unicode(gid)
                 ).first().usernames
             ).all()
-        else:
-            self.fields['usernames'].queryset = LdapUser.objects.none()
 
         # support bootstrap
         for f in GroupForm.base_fields.values():
