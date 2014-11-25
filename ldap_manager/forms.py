@@ -2,7 +2,7 @@ from django.forms import ModelForm, ModelChoiceField, \
     ModelMultipleChoiceField, BooleanField, ChoiceField, Form, CharField, \
     PasswordInput, IntegerField
 from models import LdapUser, LdapGroup
-from settings import SHELLS
+from settings import SHELLS, DEFAULT_HOME
 from django.core.exceptions import ValidationError
 
 class UserForm(ModelForm):
@@ -32,6 +32,10 @@ class UserForm(ModelForm):
         required=False
     ) # TODO: this setting is not stored anywhere. how to solve?
 
+    auto_home = BooleanField(
+        required=False
+    ) # TODO: this setting is not stored anywhere. how to solve?
+
     enable_samba = BooleanField(
         required=False
     ) # TODO: find users samba settings here
@@ -39,12 +43,6 @@ class UserForm(ModelForm):
     class Meta:
         model = LdapUser
         fields = '__all__'
-        '''
-        group is defined above
-        uid needs to be evaluated if set to auto
-        dn needs to be blank in order to save new object
-        '''
-        #exclude = ['group', 'dn']
         exclude = ['dn']
 
     def __init__(self, *args, **kwargs):
@@ -85,12 +83,17 @@ class UserForm(ModelForm):
         # if UID changes we need to remove current UID from all groups
         if not cleaned_data.get('uid') == unicode(self.instance.uid):
             self.update_groups_membership(self.instance, [])
+        self.update_groups_membership(self.instance, cleaned_data.get('groups'))
+
+        # home directory stuff goes here
+        if cleaned_data.get('auto_home'):
+            cleaned_data['home_directory'] = self.make_home_path(cleaned_data)
 
         return cleaned_data
 
     def find_next_uid(self):
-        # execute external script to find next UID
-        return unicode(2035)
+        # TODO: execute external script to find next UID
+        return unicode(2043)
 
     def update_groups_membership(self, user, new_groups):
         old_groups = LdapGroup.objects.filter(
@@ -113,6 +116,9 @@ class UserForm(ModelForm):
             print "removed from group", group
             group.save()
 
+    def make_home_path(self, data):
+        return DEFAULT_HOME.safe_substitute(username=data.get('username'))
+
 class UpdatePasswordForm(Form):
 
     password = CharField(
@@ -120,3 +126,36 @@ class UpdatePasswordForm(Form):
         max_length=100,
         widget=PasswordInput
     )
+
+class GroupForm(ModelForm):
+
+    usernames = ModelMultipleChoiceField(
+        queryset = LdapUser.objects.all(),
+        to_field_name='uid',
+        required=False
+    )
+
+    auto_gid = BooleanField(
+        required=False
+    ) # TODO: this setting is not stored anywhere. how to solve?
+
+    class Meta:
+        model = LdapGroup
+        fields = '__all__'
+        exclude = ['dn']
+
+    def __init__(self, *args, **kwargs):
+        super(GroupForm, self).__init__(*args, **kwargs)
+        gid = kwargs.pop('gid', None)
+        if gid: # dont know what to do here yet...
+            self.fields['usernames'].queryset = LdapUser.objects.filter(
+                uid__in=LdapGroup.objects.filter(
+                    gid=unicode(gid)
+                ).first().usernames
+            ).all()
+        else:
+            self.fields['usernames'].queryset = LdapUser.objects.none()
+
+        # support bootstrap
+        for f in GroupForm.base_fields.values():
+            f.widget.attrs['class'] = 'form-control'

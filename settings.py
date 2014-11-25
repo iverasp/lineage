@@ -108,4 +108,4 @@ SHELLS = (
     ('/bin/zsh', 'zsh'),
 )
 
-DEFAULT_HOME = Template('/home/$username[0]$username[1]/$username')
+DEFAULT_HOME = Template('/home/$username')

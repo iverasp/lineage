@@ -19,10 +19,18 @@ $(window).on('load', function () {
     $('#id_auto_uid').parent().addClass('active');
     $('#id_uid').prop('disabled', true);
   }
+  if ($('#id_auto_home').prop('checked')) {
+    $('#id_auto_home').parent().addClass('active');
+    $('#id_home_directory').prop('disabled', true);
+  }
 
   $('#id_auto_uid').change( function() {
     $('#id_uid').prop('disabled', $(this).prop('checked'));
   });
+  $('#id_auto_home').change( function() {
+    $('#id_home_directory').prop('disabled', $(this).prop('checked'));
+  });
+
 });
 </script>
 {% endblock head %}
@@ -101,9 +109,9 @@ $(window).on('load', function () {
       <div class="row">
         <div class="form-group row">
           <label class="col-sm-3 control-label" for="id_uid">UID</label>
-          <div class="col-sm-6">{{ form.uid }}</div>
+          <div class="col-sm-7">{{ form.uid }}</div>
           <!-- col size below messes up layout -->
-          <div class="col-sm-3">
+          <div class="col-sm-2">
             <div data-toggle="buttons">
               <label class="btn btn-default control-label pull-right" for="id_auto_uid">
                 {{ form.auto_uid }} Auto
@@ -134,6 +142,21 @@ $(window).on('load', function () {
     <div class="col-sm-6">
 
       <div class="row">
+        <div class="form-group row">
+          <label class="col-sm-4 control-label" for="id_home_directory">Home</label>
+          <div class="col-sm-6">{{ form.home_directory }}</div>
+          <!-- col size below messes up layout -->
+          <div class="col-sm-2">
+            <div data-toggle="buttons">
+              <label class="btn btn-default control-label pull-right" for="id_auto_home">
+                {{ form.auto_home }} Auto
+              </label>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="row">
         <div class="form-group">
           <label class="col-sm-4 control-label" for="id_group">Primary group</label>
           <div class="col-sm-8">{{ form.group }}</div>
@@ -162,28 +185,57 @@ $(window).on('load', function () {
       <div class="panel-group" id="accordion">
         <div class="panel panel-default" id="panel1">
           <div class="panel-heading">
-            <h4 class="panel-title">
-              <a data-toggle="collapse" data-target="#collapseOne"
-              href="#collapseOne">
-              Addition information
-            </a>
-          </h4>
+            <h4 class="panel-title" data-toggle="collapse" data-target="#collapse-additional" style="cursor:pointer;">
+            Additional information
+        </h4>
         </div>
-        <div id="collapseOne" class="panel-collapse collapse in">
+        <div id="collapse-additional" class="panel-collapse collapse in">
           <div class="panel-body">
 
+          <div class="col-sm-6">
+
             <div class="row">
-              <div class="col-sm-6">
-                <div class="form-group">
-                  <label for="id_home_directory">Home directory</label>
-                  {{ form.home_directory }}
-                </div>
-              </div>
-              <div class="col-sm-6">
+              <div class="form-group">
+                <label class="col-sm-4 control-label" for="id_phone">Phone</label>
+                <div class="col-sm-8">{{ form.phone }}</div>
               </div>
             </div>
 
-          </div>
+            <div class="row">
+              <div class="form-group">
+                <label class="col-sm-4 control-label" for="id_mobile_phone">Mobile phone</label>
+                <div class="col-sm-8">{{ form.mobile_phone }}</div>
+              </div>
+            </div>
+
+            <div class="row">
+              <div class="form-group">
+                <label class="col-sm-4 control-label" for="id_gecos">Gecos</label>
+                <div class="col-sm-8">{{ form.gecos }}</div>
+              </div>
+            </div>
+
+          </div> <!-- end first column -->
+
+          <div class="col-sm-6">
+
+            <div class="row">
+              <div class="form-group">
+                <label class="col-sm-4 control-label" for="id_date_of_birth">Date of birth</label>
+                <div class="col-sm-8">{{ form.date_of_birth }}</div>
+              </div>
+            </div>
+
+            <div class="row">
+              <div class="form-group">
+                <label class="col-sm-4 control-label" for="id_latitude">Latitude</label>
+                <div class="col-sm-8">{{ form.latitude }}</div>
+              </div>
+            </div>
+
+          </div> <!-- end second column -->
+
+          </div> <!-- end panel body -->
         </div>
       </div>
     </div>

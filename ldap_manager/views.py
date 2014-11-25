@@ -42,6 +42,7 @@ def user(request, uid):
             ).all(),
             'enable_samba': False,
             'auto_uid': True,
+            'auto_home': True,
         }
     )
     update_password_form = UpdatePasswordForm()
@@ -53,12 +54,6 @@ def user(request, uid):
         if form.is_valid():
             print "valid!"
             user = form.save(commit=False)
-            # logic for groups membership
-            groups = form.cleaned_data.get('groups')
-            update_groups_membership(user, groups)
-            # hack? probably better to use ModelChoiceField correctly
-            #user.group = form.cleaned_data.get('group').gid
-            enable_samba = form.cleaned_data.get('enable_samba')
             user.save()
             return redirect('user', user.uid)
     context = {
@@ -105,34 +100,67 @@ def add_user(request):
     )
 
 def groups(request):
-    pass
+    context = {}
+    users = LdapUser.objects.all()
+    groups = LdapGroup.objects.all()
+    context = {
+        'user_list': users,
+        'group_list': groups
+    }
+    return render_to_response(
+        'groups.html',
+        context,
+        context_instance=RequestContext(request)
+    )
 
-def group(request):
-    pass
+def group(request, gid):
+    group = LdapGroup.objects.filter(gid=gid).first()
+    if not group:
+        return redirect('groups')
+    form = GroupForm(
+        instance=group,
+        initial= {
+            'auto_gid': True,
+        }
+    )
+    if request.method == 'POST':
+        form = GroupForm(data=request.POST, instance=group)
+        if not form.is_valid():
+            print form.data
+            print form.errors
+        if form.is_valid():
+            print "valid!"
+            form.save()
+            return redirect('group', group.gid)
+    context = {
+        'group': group,
+        'form': form,
+    }
+    return render_to_response(
+        'group.html',
+        context,
+        context_instance=RequestContext(request)
+    )
+
+def add_group(request):
+    form = GroupForm()
+    if request.method == 'POST':
+        form = GroupForm(data=request.POST)
+        if not form.is_valid():
+            print form.errors
+        if form.is_valid():
+            print "valid!"
+            group = form.save(commit=False)
+            group.save()
+            return redirect('group', group.gid)
+    context = {
+        'form': form,
+    }
+    return render_to_response(
+        'group.html',
+        context,
+        context_instance=RequestContext(request)
+    )
 
 def sudoers(request):
     pass
-
-def update_groups_membership(user, new_groups):
-    old_groups = LdapGroup.objects.filter(
-        usernames__contains=unicode(user.uid)
-    ).all()
-    pos_diff = list(set(new_groups) - set(old_groups))
-    neg_diff = list(set(old_groups) - set(new_groups))
-    for group in pos_diff:
-        group = LdapGroup.objects.filter(
-            gid=group.gid
-        ).first()
-        group.usernames.append(unicode(user.uid))
-        print "added to group", group
-        group.save()
-    for group in neg_diff:
-        group = LdapGroup.objects.filter(
-            gid=group.gid
-        ).first()
-        group.usernames.remove(unicode(user.uid))
-        print "removed from group", group
-        group.save()
-
-def make_home_path(user):
-    print DEFAULT_HOME.safe_substitute(username=user.username)

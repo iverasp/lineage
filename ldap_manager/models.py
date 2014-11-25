@@ -57,7 +57,7 @@ class LdapUser(ldapdb.models.Model):
     uid = IntegerField(db_column='uidNumber', unique=True)
     group = IntegerField(db_column='gidNumber')
     gecos = CharField(db_column='gecos', blank=True)
-    home_directory = CharField(db_column='homeDirectory')
+    home_directory = CharField(db_column='homeDirectory', blank=True)
     login_shell = CharField(db_column='loginShell', default='/bin/bash')
     username = CharField(db_column='uid', primary_key=True)
     password = CharField(db_column='userPassword', blank=True)
@@ -92,7 +92,7 @@ class LdapGroup(ldapdb.models.Model):
     # posixGroup attributes
     gid = IntegerField(db_column='gidNumber', unique=True)
     name = CharField(db_column='cn', max_length=200, primary_key=True)
-    usernames = ListField(db_column='memberUid')
+    usernames = ListField(db_column='memberUid', blank=True)
 
     def __str__(self):
         return self.name
