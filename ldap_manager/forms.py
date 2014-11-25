@@ -54,6 +54,7 @@ class UserForm(ModelForm):
     def clean(self):
         cleaned_data = super(UserForm, self).clean()
         # cn should be givenName + sn
+        # this should already have been taken care of by model
         if cleaned_data.get('first_name') and cleaned_data.get('last_name'):
             cleaned_data['full_name'] = cleaned_data.get('first_name') + \
                 ' ' + cleaned_data.get('last_name')
@@ -70,15 +71,6 @@ class UserForm(ModelForm):
             # if we don't have a UID it means we're a new user
             else:
                 cleaned_data['uid'] = self.find_next_uid()
-        else: # means we want to change UID of user
-            # check if entered UID is in use and is not our own
-            user = LdapUser.objects.filter(uid=cleaned_data.get('uid')).first()
-            if user and not user == self.instance:
-                raise ValidationError('%s is already in use' % cleaned_data.get('uid'))
-
-        # somehow UID is still not set... do we need this?
-        if not cleaned_data.get('uid'):
-            cleaned_data['uid'] = unicode(self.instance.uid)
 
         # if UID changes we need to remove current UID from all groups
         if not cleaned_data.get('uid') == unicode(self.instance.uid):
