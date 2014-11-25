@@ -12,7 +12,7 @@
         <tr style="cursor: pointer;"
         onclick="document.location = '{% url 'group' group.gid %}'">
           <td>{{ group }}</td>
-          <td>{{ user.gid }}</td>
+          <td>{{ group.gid }}</td>
         </td>
         {% endfor %}
       </table>
