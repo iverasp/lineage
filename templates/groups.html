@@ -7,12 +7,14 @@
         <tr>
           <td><strong>Name</strong></td>
           <td><strong>GID</strong></td>
+          <td><strong>Members</strong></td>
         </tr>
         {% for group in group_list %}
         <tr style="cursor: pointer;"
         onclick="document.location = '{% url 'group' group.gid %}'">
           <td>{{ group }}</td>
           <td>{{ group.gid }}</td>
+          <td>{{ group.usernames | length }}</td>
         </td>
         {% endfor %}
       </table>
