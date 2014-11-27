@@ -31,6 +31,13 @@ $(document).ready(function(){
                             label: response.users[i].full_name
                         });
                     }
+                    for (var i in response.groups){
+                        availableHints.push({
+                            value: "/group/" + response.groups[i].name,
+                            label: response.groups[i].name
+                        });
+                    }
+                    console.log(availableHints)
                     $("#query").autocomplete({
                         source: availableHints,
                     });

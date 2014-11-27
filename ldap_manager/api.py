@@ -22,7 +22,6 @@ class AjaxSearchResource(Resource):
     def post_list(self, request, **kwargs):
         phrase = request.POST.get('q')
         if phrase:
-            print LdapUser.objects.filter(username__contains='adaas').all()
             users = list(LdapUser.objects.filter(
                 Q(username__contains=phrase) |
                 Q(full_name__contains=phrase)
@@ -30,4 +29,14 @@ class AjaxSearchResource(Resource):
                 'username',
                 'full_name'
             ))
-            return self.create_response(request, {'users': users})
+
+            groups = list(LdapGroup.objects.filter(
+                name__contains=phrase
+            ).values(
+                'name'
+            ))
+            print groups
+            return self.create_response(request,
+                {'users': users,
+                'groups': groups}
+            )
