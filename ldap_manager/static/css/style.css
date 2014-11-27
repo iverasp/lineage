@@ -1,0 +1,7 @@
+.table tr {
+  cursor: pointer;
+}
+
+.table tr.table_row:hover {
+  background-color: #F6FAFF
+}

@@ -3,10 +3,17 @@ from django.template import RequestContext
 from django.shortcuts import render_to_response, redirect
 from ldap_manager.models import LdapGroup, LdapUser
 from forms import *
-from settings import DEFAULT_HOME
+from settings import DEFAULT_HOME, DEFAULT_EMAIL
 from string import Template
+from django_tables2 import RequestConfig
+from tables import UsersTable, GroupsTable
 
 def index(request):
+    user = LdapUser.objects.filter(username='iwasperu').first()
+    print user
+    group = LdapGroup.objects.filter(name='dotkom').first()
+    print group
+    print group.usernames
     return render_to_response(
         'index.html',
         context_instance=RequestContext(request)
@@ -14,11 +21,10 @@ def index(request):
 
 def users(request):
     context = {}
-    users = LdapUser.objects.all()
-    groups = LdapGroup.objects.all()
+    table = UsersTable(LdapUser.objects.all())
+    RequestConfig(request).configure(table)
     context = {
-        'user_list': users,
-        'group_list': groups
+        'table': table,
     }
     return render_to_response(
         'users.html',
@@ -26,8 +32,8 @@ def users(request):
         context_instance=RequestContext(request)
     )
 
-def user(request, uid):
-    user = LdapUser.objects.filter(uid=uid).first()
+def user(request, username):
+    user = LdapUser.objects.filter(username=username).first()
     if not user:
         return redirect('users')
     #print user.password
@@ -38,11 +44,12 @@ def user(request, uid):
                 gid=unicode(user.group)
             ).first(),
             'groups': LdapGroup.objects.filter(
-                usernames__contains=unicode(user.uid)
+                usernames__contains=unicode(user.username)
             ).all(),
             'enable_samba': False,
             'auto_uid': True,
-            'auto_home': True,
+            'auto_home': user.home_directory == make_home_path(user),
+            'auto_email': user.email == make_email_adress(user),
         }
     )
     update_password_form = UpdatePasswordForm()
@@ -55,7 +62,7 @@ def user(request, uid):
             print "valid!"
             user = form.save(commit=False)
             user.save()
-            return redirect('user', user.uid)
+            return redirect('user', user.username)
     context = {
         'user': user,
         'form': form,
@@ -101,11 +108,10 @@ def add_user(request):
 
 def groups(request):
     context = {}
-    users = LdapUser.objects.all()
-    groups = LdapGroup.objects.all()
+    table = GroupsTable(LdapGroup.objects.all())
+    RequestConfig(request).configure(table)
     context = {
-        'user_list': users,
-        'group_list': groups
+        'table': table,
     }
     return render_to_response(
         'groups.html',
@@ -113,8 +119,8 @@ def groups(request):
         context_instance=RequestContext(request)
     )
 
-def group(request, gid):
-    group = LdapGroup.objects.filter(gid=gid).first()
+def group(request, name):
+    group = LdapGroup.objects.filter(name=name).first()
     if not group:
         return redirect('groups')
     form = GroupForm(
@@ -164,3 +170,9 @@ def add_group(request):
 
 def sudoers(request):
     pass
+
+def make_home_path(user):
+    return DEFAULT_HOME.safe_substitute(username=user.username)
+
+def make_email_adress(user):
+    return DEFAULT_EMAIL.safe_substitute(username=user.username)

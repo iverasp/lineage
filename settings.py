@@ -76,6 +76,15 @@ TEMPLATE_LOADERS = (
 #     'django.template.loaders.eggs.Loader',
 )
 
+TEMPLATE_CONTEXT_PROCESSORS = (
+    'django.contrib.auth.context_processors.auth',
+    'django.core.context_processors.request',
+)
+
+TEMPLATE_CONTEXT_LOADERS = (
+    'django.core.context_processors.static',
+)
+
 MIDDLEWARE_CLASSES = (
     'django.middleware.common.CommonMiddleware',
     'django.contrib.sessions.middleware.SessionMiddleware',
@@ -100,7 +109,12 @@ INSTALLED_APPS = (
     'ldap_manager',
     'django.contrib.admin',
     'django.contrib.staticfiles',
+    'django_tables2',
+    'bootstrap3',
+    'tastypie',
 )
+
+BASE_DN="dc=iegget,dc=no"
 
 SHELLS = (
     ('/bin/false', 'false'),
@@ -109,3 +123,4 @@ SHELLS = (
 )
 
 DEFAULT_HOME = Template('/home/$username')
+DEFAULT_EMAIL = Template('$username@stud.ntnu.no')

@@ -1,5 +1,8 @@
 {% extends 'base.html' %}
 {% block head %}
+<link href="/static/css/multi-select.css" rel="stylesheet">
+<script src="/static/js/jquery.multi-select.js"></script>
+<script src="/static/js/user.js"></script>
 <script>
 $(window).on('load', function () {
   {% if form.errors %}
@@ -9,28 +12,6 @@ $(window).on('load', function () {
       {% endif %}
     {% endfor %}
   {% endif %}
-
-  $('#id_full_name').html($('#id_first_name').val() + ' ' + $('#id_last_name').val());
-  $('#id_first_name, #id_last_name').on('keyup', function() {
-    $('#id_full_name').html($('#id_first_name').val() + ' ' + $('#id_last_name').val());
-  });
-
-  if ($('#id_auto_uid').prop('checked')) {
-    $('#id_auto_uid').parent().addClass('active');
-    $('#id_uid').prop('disabled', true);
-  }
-  if ($('#id_auto_home').prop('checked')) {
-    $('#id_auto_home').parent().addClass('active');
-    $('#id_home_directory').prop('disabled', true);
-  }
-
-  $('#id_auto_uid').change( function() {
-    $('#id_uid').prop('disabled', $(this).prop('checked'));
-  });
-  $('#id_auto_home').change( function() {
-    $('#id_home_directory').prop('disabled', $(this).prop('checked'));
-  });
-
 });
 </script>
 {% endblock head %}
@@ -100,9 +81,17 @@ $(window).on('load', function () {
       </div>
 
       <div class="row">
-        <div class="form-group">
-          <label class="col-sm-3 control-label" for="id_email">Email</label>
-          <div class="col-sm-9">{{ form.email }}</div>
+        <div class="form-group row">
+          <label class="col-xs-3 col-sm-3 col-md-3 control-label" for="id_email">Email</label>
+          <div class="col-xs-6 col-sm-6 col-md-7">{{ form.email }}</div>
+          <!-- col size below messes up layout -->
+          <div class="col-xs-3 col-sm-3 col-md-2">
+            <div data-toggle="buttons">
+              <label class="btn btn-default control-label pull-right" for="id_auto_email">
+                {{ form.auto_email }} Auto
+              </label>
+            </div>
+          </div>
         </div>
       </div>
 
@@ -143,8 +132,8 @@ $(window).on('load', function () {
 
       <div class="row">
         <div class="form-group row">
-          <label class="col-xs-4 col-sm-4 col-md-4 control-label" for="id_home_directory">Home</label>
-          <div class="col-xs-5 col-sm-5 col-md-6">{{ form.home_directory }}</div>
+          <label class="col-xs-3 col-sm-4 col-md-4 control-label" for="id_home_directory">Home</label>
+          <div class="col-xs-6 col-sm-5 col-md-6">{{ form.home_directory }}</div>
           <!-- col size below messes up layout -->
           <div class="col-xs-3 col-sm-3 col-md-2">
             <div data-toggle="buttons">
@@ -165,8 +154,8 @@ $(window).on('load', function () {
 
       <div class="row">
         <div class="form-group">
+          <!- - currently only shows correctly on gt 1200px width - ->
           <label class="col-sm-4 control-label" for="id_groups">Additional groups</label>
-          <!- - make as high as the rest of the div - ->
           <div class="col-sm-8">{{ form.groups }}</div>
         </div>
       </div>

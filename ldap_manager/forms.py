@@ -2,7 +2,7 @@ from django.forms import ModelForm, ModelChoiceField, \
     ModelMultipleChoiceField, BooleanField, ChoiceField, Form, CharField, \
     PasswordInput, IntegerField
 from models import LdapUser, LdapGroup
-from settings import SHELLS, DEFAULT_HOME
+from settings import SHELLS, DEFAULT_HOME, DEFAULT_EMAIL
 from django.core.exceptions import ValidationError
 
 class UserForm(ModelForm):
@@ -30,11 +30,24 @@ class UserForm(ModelForm):
 
     auto_uid = BooleanField(
         required=False
-    ) # TODO: this setting is not stored anywhere. how to solve?
+    )
+    # TODO: this setting is not stored anywhere. how to solve?
+    # Maybe it should always be on? Only in rare cases
+    # would a user need to specify their UID.
 
     auto_home = BooleanField(
         required=False
-    ) # TODO: this setting is not stored anywhere. how to solve?
+    )
+    # TODO: this setting is not stored anywhere. how to solve?
+    # Currently fixed by checking if the path is the same as the one
+    # that would be generated automatically (see views.py)
+
+    auto_email = BooleanField(
+        required=False
+    )
+    # TODO: this setting is not stored anywhere. how to solve?
+    # Currently fixed by checking if the email is the same as the one
+    # that would be generated automatically (see views.py)
 
     enable_samba = BooleanField(
         required=False
@@ -54,7 +67,7 @@ class UserForm(ModelForm):
     def clean(self):
         cleaned_data = super(UserForm, self).clean()
         # cn should be givenName + sn
-        # this should already have been taken care of by model
+        # the if below should already have been taken care of by model...
         if cleaned_data.get('first_name') and cleaned_data.get('last_name'):
             cleaned_data['full_name'] = cleaned_data.get('first_name') + \
                 ' ' + cleaned_data.get('last_name')
@@ -65,6 +78,7 @@ class UserForm(ModelForm):
             cleaned_data['group'] = cleaned_data.get('group').gid
         # UID related stuff goes here
         if cleaned_data.get('auto_uid'):
+            print 'got uid?'
             # if we have a UID it does not need changing
             if self.instance.uid > 0:
                 cleaned_data['uid'] = unicode(self.instance.uid)
@@ -73,23 +87,39 @@ class UserForm(ModelForm):
                 cleaned_data['uid'] = self.find_next_uid()
 
         # if UID changes we need to remove current UID from all groups
-        if not cleaned_data.get('uid') == unicode(self.instance.uid):
+        if not cleaned_data.get('username') == unicode(self.instance.username):
             self.update_groups_membership(self.instance, [])
-        self.update_groups_membership(self.instance, cleaned_data.get('groups'))
+
 
         # home directory stuff goes here
         if cleaned_data.get('auto_home'):
             cleaned_data['home_directory'] = self.make_home_path(cleaned_data)
 
+        # email stuff goes here
+        if cleaned_data.get('auto_email'):
+            cleaned_data['email'] = self.make_email_adress(self.instance)
+
+        # did we change the primary key? that was stupid...
+        if not cleaned_data.get('username') == unicode(self.instance.username):
+            user = LdapUser.objects.filter(username=self.instance.username).first()
+            user.username = cleaned_data.get('username')
+            user.save()
+            self.instance = user
+        
+
+        # update group memeberships
+        self.update_groups_membership(self.instance, cleaned_data.get('groups'))
+
+
         return cleaned_data
 
     def find_next_uid(self):
         # TODO: execute external script to find next UID
-        return unicode(2043)
+        return unicode(4333)
 
     def update_groups_membership(self, user, new_groups):
         old_groups = LdapGroup.objects.filter(
-            usernames__contains=unicode(user.uid)
+            usernames__contains=unicode(user.username)
         ).all()
         pos_diff = list(set(new_groups) - set(old_groups))
         neg_diff = list(set(old_groups) - set(new_groups))
@@ -97,19 +127,22 @@ class UserForm(ModelForm):
             group = LdapGroup.objects.filter(
                 gid=group.gid
             ).first()
-            group.usernames.append(unicode(user.uid))
-            print "added to group", group
+            group.usernames.append(unicode(user.username))
+            print "added", user.username, "to group", group
             group.save()
         for group in neg_diff:
             group = LdapGroup.objects.filter(
                 gid=group.gid
             ).first()
-            group.usernames.remove(unicode(user.uid))
-            print "removed from group", group
+            group.usernames.remove(unicode(user.username))
+            print "removed", user.username, "from group", group
             group.save()
 
     def make_home_path(self, data):
         return DEFAULT_HOME.safe_substitute(username=data.get('username'))
+
+    def make_email_adress(self, user):
+        return DEFAULT_EMAIL.safe_substitute(username=user.username)
 
 class UpdatePasswordForm(Form):
 
@@ -144,7 +177,7 @@ class GroupForm(ModelForm):
 
         if gid: # dont know what to do here yet...
             self.fields['usernames'].queryset = LdapUser.objects.filter(
-                uid__in=LdapGroup.objects.filter(
+                username__in=LdapGroup.objects.filter(
                     gid=unicode(gid)
                 ).first().usernames
             ).all()
@@ -152,3 +185,7 @@ class GroupForm(ModelForm):
         # support bootstrap
         for f in GroupForm.base_fields.values():
             f.widget.attrs['class'] = 'form-control'
+
+    def find_next_gid(self):
+        # TODO: execute external script to find next GID
+        return unicode(4002)

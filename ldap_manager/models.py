@@ -34,6 +34,8 @@ from ldapdb.models.fields import (CharField, DateField, ImageField, ListField,
                                   IntegerField, FloatField)
 import ldapdb.models
 from passlib.hash import ldap_sha512_crypt
+from settings import BASE_DN
+from django.db.models import ManyToManyField
 
 
 class LdapUser(ldapdb.models.Model):
@@ -41,14 +43,14 @@ class LdapUser(ldapdb.models.Model):
     Class for representing an LDAP user entry.
     """
     # LDAP meta-data
-    base_dn = "ou=groups,dc=iegget,dc=no"
+    base_dn = "ou=people," + BASE_DN
     object_classes = ['posixAccount', 'shadowAccount', 'inetOrgPerson']
 
     # inetOrgPerson
     first_name = CharField(db_column='givenName')
     last_name = CharField(db_column='sn')
     full_name = CharField(db_column='cn', blank=True)
-    email = CharField(db_column='mail')
+    email = CharField(db_column='mail', blank=True)
     phone = CharField(db_column='telephoneNumber', blank=True)
     mobile_phone = CharField(db_column='mobile', blank=True)
     photo = ImageField(db_column='jpegPhoto', blank=True)
@@ -59,7 +61,7 @@ class LdapUser(ldapdb.models.Model):
     gecos = CharField(db_column='gecos', blank=True)
     home_directory = CharField(db_column='homeDirectory', blank=True)
     login_shell = CharField(db_column='loginShell', default='/bin/bash')
-    username = CharField(db_column='uid', primary_key=True)
+    username = CharField(db_column='uid', primary_key=True, unique=True)
     password = CharField(db_column='userPassword', blank=True)
 
     date_of_birth = DateField(db_column='birthday', blank=True)
@@ -86,7 +88,7 @@ class LdapGroup(ldapdb.models.Model):
     Class for representing an LDAP group entry.
     """
     # LDAP meta-data
-    base_dn = "ou=groups,dc=iegget,dc=no"
+    base_dn = "ou=groups," + BASE_DN
     object_classes = ['posixGroup']
 
     # posixGroup attributes
