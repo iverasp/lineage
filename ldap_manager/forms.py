@@ -4,6 +4,7 @@ from django.forms import ModelForm, ModelChoiceField, \
 from models import LdapUser, LdapGroup
 from settings import SHELLS, DEFAULT_HOME, DEFAULT_EMAIL
 from django.core.exceptions import ValidationError
+from django_password_strength.widgets import PasswordStrengthInput, PasswordConfirmationInput
 
 class UserForm(ModelForm):
 
@@ -56,7 +57,7 @@ class UserForm(ModelForm):
     class Meta:
         model = LdapUser
         fields = '__all__'
-        exclude = ['dn']
+        exclude = ['dn', 'password']
 
     def __init__(self, *args, **kwargs):
         super(UserForm, self).__init__(*args, **kwargs)
@@ -90,7 +91,6 @@ class UserForm(ModelForm):
         if not cleaned_data.get('username') == unicode(self.instance.username):
             self.update_groups_membership(self.instance, [])
 
-
         # home directory stuff goes here
         if cleaned_data.get('auto_home'):
             cleaned_data['home_directory'] = self.make_home_path(cleaned_data)
@@ -105,11 +105,9 @@ class UserForm(ModelForm):
             user.username = cleaned_data.get('username')
             user.save()
             self.instance = user
-        
 
         # update group memeberships
         self.update_groups_membership(self.instance, cleaned_data.get('groups'))
-
 
         return cleaned_data
 
@@ -149,8 +147,18 @@ class UpdatePasswordForm(Form):
     password = CharField(
         label="New password",
         max_length=100,
-        widget=PasswordInput
+        widget=PasswordStrengthInput()
     )
+
+    confirm_password = CharField(
+        widget=PasswordConfirmationInput(confirm_with='password')
+    )
+
+    def __init__(self, *args, **kwargs):
+        super(UpdatePasswordForm, self).__init__(*args, **kwargs)
+        # support bootstrap
+        for f in UpdatePasswordForm.base_fields.values():
+            f.widget.attrs['class'] = 'form-control'
 
 class GroupForm(ModelForm):
 

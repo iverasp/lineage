@@ -38,7 +38,7 @@
     <tbody>
         {% for row in table.page.object_list|default:table.rows %} {# support pagination #}
         {% block table.tbody.row %}
-        <tr class="{{ row.tr_class }}" onclick="document.location = '{% url table.baseurl row.name %}'">
+        <tr class="{{ row.tr_class }}" onclick="document.location = '{% url table.baseurl row.username %}'">
             {% for column, cell in row.items %}
                 <td {{ column.attrs.td.as_html }}>{{ cell }}</td>
             {% endfor %}

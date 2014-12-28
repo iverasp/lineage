@@ -11,7 +11,14 @@ $(document).ready(function(){
         },
         minLength: 3,
         delay: 500,
-    });
+    })
+    // show icon next to result
+    .data( "ui-autocomplete" )._renderItem = function( ul, item ) {
+      return $( "<li></li>" )
+      .data( "item.autocomplete", item )
+      .append( "<img width='16' height='16' src=" + item.icon + "/>  " + item.label)
+      .appendTo( ul );
+    };
 
     $("input#query").keyup(function(){
         var query = $(this).val();
@@ -23,21 +30,23 @@ $(document).ready(function(){
                 url: "/api/v1/ajaxsearch/",
                 data: dataString,
                 success: function(response){
-                  console.log(response)
+
                     var availableHints = [];
                     for (var i in response.users){
                         availableHints.push({
+                            icon: '/static/img/user.svg',
                             value: "/user/" + response.users[i].username,
                             label: response.users[i].full_name
                         });
                     }
                     for (var i in response.groups){
                         availableHints.push({
+                            icon: '/static/img/group.svg',
                             value: "/group/" + response.groups[i].name,
                             label: response.groups[i].name
                         });
                     }
-                    console.log(availableHints)
+
                     $("#query").autocomplete({
                         source: availableHints,
                     });

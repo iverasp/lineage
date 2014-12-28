@@ -36,7 +36,7 @@ def user(request, username):
     user = LdapUser.objects.filter(username=username).first()
     if not user:
         return redirect('users')
-    #print user.password
+    print 'password', user.password
     form = UserForm(
         instance=user,
         initial= {

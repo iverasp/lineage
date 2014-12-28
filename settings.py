@@ -112,6 +112,7 @@ INSTALLED_APPS = (
     'django_tables2',
     'bootstrap3',
     'tastypie',
+    'django_password_strength',
 )
 
 BASE_DN="dc=iegget,dc=no"
