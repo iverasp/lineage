@@ -1,3 +1,11 @@
+
+DEBUG = True
+TEMPLATE_DEBUG = DEBUG
+
+#Overide this here!
+SECRET_KEY = 'some_random_secret_key'
+
+
 DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.sqlite3',
