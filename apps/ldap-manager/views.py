@@ -3,7 +3,7 @@ from django.template import RequestContext
 from django.shortcuts import render_to_response, redirect
 from models import LdapGroup, LdapUser, LdapOrgUnit
 from forms import *
-from django-ldap-manager.settings import DEFAULT_HOME, DEFAULT_EMAIL
+from django_ldap_manager.settings import DEFAULT_HOME, DEFAULT_EMAIL
 from string import Template
 from django_tables2 import RequestConfig
 from tables import UsersTable, GroupsTable
