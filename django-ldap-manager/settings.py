@@ -1,34 +1,19 @@
-# Django settings for django-ldapdb project.
 import os
 import ldap
-from string import Template
 
 DEBUG = True
 TEMPLATE_DEBUG = DEBUG
 
+BASE_DIR = os.path.dirname(os.path.dirname(__file__))
 PROJECT_SETTINGS_DIRECTORY = os.path.dirname(globals()['__file__'])
-PROJECT_ROOT_DIRECTORY = os.path.join(PROJECT_SETTINGS_DIRECTORY)
+PROJECT_ROOT_DIRECTORY = os.path.join(PROJECT_SETTINGS_DIRECTORY, '..', '..')
 
-DATABASES = {
-    'default': {
-        'ENGINE': 'django.db.backends.sqlite3',
-        'NAME': 'ldapdb.db',
-        'USER': '',
-        'PASSWORD': '',
-        'HOST': '',
-        'PORT': '',
-    },
-    'ldap': {
-        'ENGINE': 'ldapdb.backends.ldap',
-        'NAME': 'ldap://pi',
-        'USER': 'cn=admin,dc=iegget,dc=no',
-        'PASSWORD': 'lolcats',
-        #'TLS': True,
-        #'CONNECTION_OPTIONS': {
-        #    ldap.OPT_X_TLS_DEMAND: True,
-        #}
-    }
-}
+try:
+    from local_settings import *
+except ImportError as e:
+    print(e)
+    pass
+
 DATABASE_ROUTERS = ['ldapdb.router.Router']
 
 # Local time zone for this installation. Choices can be found here:
@@ -93,12 +78,12 @@ MIDDLEWARE_CLASSES = (
     'django.contrib.messages.middleware.MessageMiddleware',
 )
 
-ROOT_URLCONF = 'urls'
+ROOT_URLCONF = 'django-ldap-manager.urls'
 
 STATIC_URL = '/static/'
 
 TEMPLATE_DIRS = (
-    os.path.join(PROJECT_ROOT_DIRECTORY, 'templates/'),
+    os.path.join(BASE_DIR, 'templates/'),
 )
 
 INSTALLED_APPS = (
@@ -106,7 +91,7 @@ INSTALLED_APPS = (
     'django.contrib.contenttypes',
     'django.contrib.sessions',
     'ldapdb',
-    'ldap_manager',
+    'apps.ldap-manager',
     'django.contrib.admin',
     'django.contrib.staticfiles',
     'django_tables2',
@@ -114,14 +99,3 @@ INSTALLED_APPS = (
     'tastypie',
     'django_password_strength',
 )
-
-BASE_DN="dc=iegget,dc=no"
-
-SHELLS = (
-    ('/bin/false', 'false'),
-    ('/bin/bash', 'bash'),
-    ('/bin/zsh', 'zsh'),
-)
-
-DEFAULT_HOME = Template('/home/$username')
-DEFAULT_EMAIL = Template('$username@stud.ntnu.no')

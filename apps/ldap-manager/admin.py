@@ -31,7 +31,7 @@
 #
 
 from django.contrib import admin
-from ldap_manager.models import LdapGroup, LdapUser
+from models import LdapGroup, LdapUser
 
 class LdapGroupAdmin(admin.ModelAdmin):
     exclude = ['dn', 'usernames']

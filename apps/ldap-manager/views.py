@@ -1,9 +1,9 @@
 from django.http import HttpResponse
 from django.template import RequestContext
 from django.shortcuts import render_to_response, redirect
-from ldap_manager.models import LdapGroup, LdapUser
+from models import LdapGroup, LdapUser
 from forms import *
-from settings import DEFAULT_HOME, DEFAULT_EMAIL
+from local_settings import DEFAULT_HOME, DEFAULT_EMAIL
 from string import Template
 from django_tables2 import RequestConfig
 from tables import UsersTable, GroupsTable
@@ -31,8 +31,7 @@ def user(request, username):
     user = LdapUser.objects.filter(username=username).first()
     if not user:
         return redirect('users')
-    print 'photo', user.photo
-    print 'password', user.password
+    #print 'photo', user.photo
     form = UserForm(
         instance=user,
         initial= {
