@@ -109,6 +109,9 @@ class UserForm(ModelForm):
         # update group memeberships
         self.update_groups_membership(self.instance, cleaned_data.get('groups'))
 
+        # photo is returned as unicode and causes TypeError
+        cleaned_data['photo'] = str(cleaned_data['photo'])
+
         return cleaned_data
 
     def find_next_uid(self):
@@ -197,3 +200,6 @@ class GroupForm(ModelForm):
     def find_next_gid(self):
         # TODO: execute external script to find next GID
         return unicode(4002)
+
+class SettingsForm(Form):
+    pass

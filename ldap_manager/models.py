@@ -35,8 +35,6 @@ from ldapdb.models.fields import (CharField, DateField, ImageField, ListField,
 import ldapdb.models
 from passlib.hash import ldap_sha512_crypt
 from settings import BASE_DN
-from django.db.models import ManyToManyField
-
 
 class LdapUser(ldapdb.models.Model):
     """
@@ -79,9 +77,6 @@ class LdapUser(ldapdb.models.Model):
 
     def check_password(self, password):
         return ldap_sha512_crypt.verify(password, self.password)
-
-
-
 
 class LdapGroup(ldapdb.models.Model):
     """

@@ -9,11 +9,6 @@ from django_tables2 import RequestConfig
 from tables import UsersTable, GroupsTable
 
 def index(request):
-    user = LdapUser.objects.filter(username='iwasperu').first()
-    print user
-    group = LdapGroup.objects.filter(name='dotkom').first()
-    print group
-    print group.usernames
     return render_to_response(
         'index.html',
         context_instance=RequestContext(request)
@@ -36,6 +31,7 @@ def user(request, username):
     user = LdapUser.objects.filter(username=username).first()
     if not user:
         return redirect('users')
+    print 'photo', user.photo
     print 'password', user.password
     form = UserForm(
         instance=user,
@@ -170,6 +166,17 @@ def add_group(request):
 
 def sudoers(request):
     pass
+
+def settings(request):
+    form = SettingsForm()
+    context = {
+        'form': form,
+    }
+    return render_to_response(
+        'settings.html',
+        context,
+        context_instance=RequestContext(request)
+    )
 
 def make_home_path(user):
     return DEFAULT_HOME.safe_substitute(username=user.username)

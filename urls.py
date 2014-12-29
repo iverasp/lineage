@@ -26,8 +26,6 @@ urlpatterns = patterns(
     url(r'^group/(?P<name>\w{0,50})/$', 'ldap_manager.views.group', name='group'),
     url(r'^admin/doc/', include('django.contrib.admindocs.urls')),
     url(r'^admin/', include(admin.site.urls)),
-    #(r'^api/', include(user_resource.urls)),
-    #(r'^api/', include(group_resource.urls)),
     url(r'^api/', include(rest_api.urls)),
 
 )

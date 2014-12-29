@@ -5,8 +5,10 @@
 <script src="/static/js/user.js"></script>
 <script src="/static/django_password_strength/js/zxcvbn.js"></script>
 <script src="/static/django_password_strength/js/password_strength.js"></script>
+<script src="/static/js/dropzone.js"></script>
 <script>
 $(window).on('load', function () {
+  // indicate which field in form has error
   {% if form.errors %}
     {% for field in form %}
       {% if field.errors %}
@@ -14,6 +16,75 @@ $(window).on('load', function () {
       {% endif %}
     {% endfor %}
   {% endif %}
+
+  // image upload stuff goes here
+  Dropzone.autoDiscover = false;
+  $("#id_dropzone").dropzone({
+    url: '/',
+    paramName: 'file',
+    clickable: true,
+    maxFiles: 1,
+    maxFilesize: 1,
+    addRemoveLinks: false,
+    uploadMultiple: false,
+    autoProcessQueue: false,
+    createImageThumbnails: true,
+    thumbnailWidth: 100,
+    thumbnailHeight: 100,
+    success: function(response) {
+      console.log(response);
+    },
+    accept: function(file, done) {
+      var reader = new FileReader();
+      reader.onload = handleReaderLoad;
+      reader.readAsDataURL(file);
+      function handleReaderLoad(evt) {
+        /*
+        //console.log(evt);
+        $("#id_photo").val(
+          evt.target.result.replace('data:image/png;base64,', '')
+        );
+        */
+      }
+      return done();
+    },
+    init: function() {
+      var mockFile = {
+        type: 'image/jpeg',
+      };
+      this.emit("addedfile", mockFile);
+      if ($("#id_photo").val()) {
+        this.emit("thumbnail", mockFile, "data:image/jpeg;base64," + $("#id_photo").val());
+      } else {
+        this.emit("thumbnail", mockFile, "/static/img/default_profile.png");
+      }
+      $("#id_dropzone img").width(100);
+      $("#id_dropzone img").height(100);
+      this.on("thumbnail", function(file) {
+        console.log(file)
+        var reader = new FileReader();
+        reader.onload = handleReaderLoad;
+        reader.readAsDataURL(file);
+        function handleReaderLoad(evt) {
+          console.log(evt);
+          $("#id_photo").val(
+            evt.target.result.replace('data:image/png;base64,', '')
+          );
+        }
+      })
+    }
+  });
+
+  /*
+  if ($("id_photo").val()) {
+    $("#id_photo_show").attr("src", "data:image/jpeg;base64," + $("id_photo").val());
+    console.log('yo');
+  } else {
+    console.log('lo');
+    $("#id_photo_show").attr("src", "http://www.livehappy.com/sites/default/files/styles/author/public/default_images/default_profile.png");
+  }
+  */
+
 });
 </script>
 {% endblock head %}
@@ -22,7 +93,7 @@ $(window).on('load', function () {
 
 <div class="container-liquid">
 
-  <form class="form-horizontal" role="form" method="post" action="">
+  <form id="id_user_form" class="form-horizontal" role="form" method="post" action="">
     {% csrf_token %}
 
     {% if form.errors %}
@@ -39,12 +110,19 @@ $(window).on('load', function () {
     <div class="col-sm-12">
       <div class="row">
         <div class="col-sm-2">
-          <!- - show user image. allow changing - ->
-          {% if not form.photo.value %}
-          <img class="img-rounded" width="100" height="100" src="http://www.livehappy.com/sites/default/files/styles/author/public/default_images/default_profile.png"/>
-          {% else %}
-          <img class="img-rounded" width="100" height="100" src="data:image/jpeg;base64, {{ form.photo.value }}"/>
-          {% endif %}
+
+          <div id="id_dropzone">
+            {{ form.photo.as_hidden }}
+            <div class="fallback">
+              {% if not form.photo.value %}
+              <img class="img-rounded" width="100" height="100" src="/static/img/default_profile.png"/>
+              {% else %}
+              <img class="img-rounded" width="100" height="100" src="data:image/jpeg;base64, {{ form.photo.value }}"/>
+              {% endif %}
+              <i>Javascript needs to be enabled to edit account photo</i>
+            </div>
+          </div>
+
         </div>
         <div class="col-sm-10">
           <h3 id="id_full_name"></h3>
