@@ -26,3 +26,14 @@ DATABASES = {
         #}
     }
 }
+
+BASE_DN="dc=herpderp,dc=no"
+
+
+SHELLS += (
+       # Add additional shells on ('/bin/false', 'false') form
+)
+
+from string import Template
+DEFAULT_HOME = Template('/home/$username')
+DEFAULT_EMAIL = Template('$username@stud.ntnu.no')

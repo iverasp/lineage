@@ -95,6 +95,12 @@ INSTALLED_APPS = (
     'django_password_strength',
 )
 
+SHELLS = (
+    ('/bin/false', 'false'),
+    ('/bin/bash', 'bash'),
+    ('/bin/zsh', 'zsh'),
+)
+
 try:
     from local_settings import *
 except ImportError as e:
