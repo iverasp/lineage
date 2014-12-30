@@ -103,6 +103,7 @@ class UserForm(ModelForm):
             cleaned_data['email'] = self.make_email_adress(self.instance)
 
         # did we change the primary key? that was stupid...
+        # only run this if we're not a new user
         if LdapUser.objects.filter(username=self.instance.username).first():
             if not cleaned_data.get('username') == unicode(self.instance.username):
                 user = LdapUser.objects.filter(username=self.instance.username).first()

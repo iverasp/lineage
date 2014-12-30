@@ -1,5 +1,5 @@
 ### local_settings ###
-*local_settings*
+#*local_settings*
 
 ### sqlite ####
 *.db
