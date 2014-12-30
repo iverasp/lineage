@@ -67,16 +67,19 @@ class UserForm(ModelForm):
 
     def clean(self):
         cleaned_data = super(UserForm, self).clean()
+
         # cn should be givenName + sn
-        # the if below should already have been taken care of by model...
+        # the case below should already have been taken care of by model...
         if cleaned_data.get('first_name') and cleaned_data.get('last_name'):
             cleaned_data['full_name'] = cleaned_data.get('first_name') + \
                 ' ' + cleaned_data.get('last_name')
         else:
             raise ValidationError('You must supply first and last names')
+
         # this could be fixed in ModelChoiceField?
         if cleaned_data.get('group'):
             cleaned_data['group'] = cleaned_data.get('group').gid
+
         # UID related stuff goes here
         if cleaned_data.get('auto_uid'):
             print 'got uid?'
@@ -100,17 +103,19 @@ class UserForm(ModelForm):
             cleaned_data['email'] = self.make_email_adress(self.instance)
 
         # did we change the primary key? that was stupid...
-        if not cleaned_data.get('username') == unicode(self.instance.username):
-            user = LdapUser.objects.filter(username=self.instance.username).first()
-            user.username = cleaned_data.get('username')
-            user.save()
-            self.instance = user
+        if LdapUser.objects.filter(username=self.instance.username).first():
+            if not cleaned_data.get('username') == unicode(self.instance.username):
+                user = LdapUser.objects.filter(username=self.instance.username).first()
+                user.username = cleaned_data.get('username')
+                user.save()
+                self.instance = user
 
         # update group memeberships
         self.update_groups_membership(self.instance, cleaned_data.get('groups'))
 
         # photo is returned as unicode and causes TypeError
-        cleaned_data['photo'] = str(cleaned_data['photo'])
+        if cleaned_data.get('photo'):
+            cleaned_data['photo'] = str(cleaned_data['photo'])
 
         return cleaned_data
 
