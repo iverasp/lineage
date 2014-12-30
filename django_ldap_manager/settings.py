@@ -73,7 +73,7 @@ MIDDLEWARE_CLASSES = (
     'django.contrib.messages.middleware.MessageMiddleware',
 )
 
-ROOT_URLCONF = 'django-ldap-manager.urls'
+ROOT_URLCONF = 'django_ldap_manager.urls'
 
 STATIC_URL = '/static/'
 
