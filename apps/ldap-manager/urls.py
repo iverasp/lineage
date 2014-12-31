@@ -17,6 +17,7 @@ admin.autodiscover()
 urlpatterns = patterns(
     'apps.ldap-manager.views',
     url(r'^$', 'index', name='index'),
+    url(r'^initial/', 'initial', name='initial'),
     url(r'^users/', 'users', name='users'),
     url(r'^groups/', 'groups', name='groups'),
     url(r'^add_user/', 'add_user', name='add_user'),

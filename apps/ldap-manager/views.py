@@ -1,12 +1,27 @@
 from django.http import HttpResponse
 from django.template import RequestContext
 from django.shortcuts import render_to_response, redirect
-from models import LdapGroup, LdapUser
+from models import LdapGroup, LdapUser, LdapNode
 from forms import *
 from app_settings import DEFAULT_HOME, DEFAULT_EMAIL
 from string import Template
 from django_tables2 import RequestConfig
 from tables import UsersTable, GroupsTable
+
+def initial(request):
+
+    nodes = LdapNode.objects.all()
+    print nodes
+
+    #groups = LdapNode(name="groups")
+    #groups.save()
+    #people = LdapNode(name="people")
+    #people.save()
+
+    return render_to_response(
+        'initial.html',
+        context_instance=RequestContext(request)
+    )
 
 def index(request):
     return render_to_response(

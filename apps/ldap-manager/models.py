@@ -36,6 +36,21 @@ import ldapdb.models
 from passlib.hash import ldap_sha512_crypt
 from app_settings import BASE_DN
 
+class LdapNode(ldapdb.models.Model):
+    """
+    Class for representing an LDAP node entry
+    """
+    base_dn = BASE_DN
+    object_classes = ['organizationalUnit']
+
+    name = CharField(db_column='ou', primary_key=True, unique=True)
+
+    def __str__(self):
+        return self.name
+
+    def __unicode__(self):
+        return self.name
+
 class LdapUser(ldapdb.models.Model):
     """
     Class for representing an LDAP user entry.
