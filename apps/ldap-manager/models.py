@@ -36,9 +36,9 @@ import ldapdb.models
 from passlib.hash import ldap_sha512_crypt
 from app_settings import BASE_DN
 
-class LdapNode(ldapdb.models.Model):
+class LdapOrgUnit(ldapdb.models.Model):
     """
-    Class for representing an LDAP node entry
+    Class for representing an LDAP organizational unit entry
     """
     base_dn = BASE_DN
     object_classes = ['organizationalUnit']

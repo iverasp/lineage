@@ -13,9 +13,9 @@ def initial(request):
     nodes = LdapNode.objects.all()
     print nodes
 
-    #groups = LdapNode(name="groups")
+    #groups = LdapOrgUnit(name="groups")
     #groups.save()
-    #people = LdapNode(name="people")
+    #people = LdapOrgUnit(name="people")
     #people.save()
 
     return render_to_response(
