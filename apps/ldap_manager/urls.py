@@ -15,7 +15,7 @@ rest_api.register(AjaxSearchResource())
 admin.autodiscover()
 
 urlpatterns = patterns(
-    'apps.ldap-manager.views',
+    'apps.ldap_manager.views',
     url(r'^$', 'index', name='index'),
     url(r'^initial/', 'initial', name='initial'),
     url(r'^users/', 'users', name='users'),

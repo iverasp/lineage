@@ -86,7 +86,7 @@ INSTALLED_APPS = (
     'django.contrib.contenttypes',
     'django.contrib.sessions',
     'ldapdb',
-    'apps.ldap-manager',
+    'apps.ldap_manager'.
     'django.contrib.admin',
     'django.contrib.staticfiles',
     'django_tables2',
