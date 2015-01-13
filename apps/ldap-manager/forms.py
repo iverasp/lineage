@@ -4,7 +4,8 @@ from django.forms import ModelForm, ModelChoiceField, \
 from models import LdapUser, LdapGroup
 from lineage.settings import SHELLS, DEFAULT_HOME, DEFAULT_EMAIL
 from django.core.exceptions import ValidationError
-from django_password_strength.widgets import PasswordStrengthInput, PasswordConfirmationInput
+from django_password_strength.widgets import PasswordStrengthInput, \
+    PasswordConfirmationInput
 
 class UserForm(ModelForm):
 
@@ -16,7 +17,7 @@ class UserForm(ModelForm):
 
     groups = ModelMultipleChoiceField(
         queryset=LdapGroup.objects.all(),
-        to_field_name='gid',
+        to_field_name='name',
         required=False
     )
 
