@@ -34,7 +34,7 @@ from ldapdb.models.fields import (CharField, DateField, ImageField, ListField,
                                   IntegerField, FloatField)
 import ldapdb.models
 from passlib.hash import ldap_sha512_crypt
-from django_ldap_manager.settings import BASE_DN, DATE_INPUT_FORMATS
+from lineage.settings import BASE_DN, DATE_INPUT_FORMATS
 
 class LdapOrgUnit(ldapdb.models.Model):
     """
