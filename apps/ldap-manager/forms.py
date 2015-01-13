@@ -2,7 +2,8 @@ from django.forms import ModelForm, ModelChoiceField, \
     ModelMultipleChoiceField, BooleanField, ChoiceField, Form, CharField, \
     PasswordInput, IntegerField
 from models import LdapUser, LdapGroup
-from lineage.settings import SHELLS, DEFAULT_HOME, DEFAULT_EMAIL
+from lineage.settings import SHELLS, DEFAULT_HOME, DEFAULT_EMAIL, \
+    MIN_UID, MIN_GID
 from django.core.exceptions import ValidationError
 from django_password_strength.widgets import PasswordStrengthInput, \
     PasswordConfirmationInput
@@ -126,7 +127,10 @@ class UserForm(ModelForm):
         # Or do the following: find the LdapUser with the highest
         # UID and add one
         # In that case: TODO: find unused UID if a user has been deleted
-        return LdapUser.objects.latest('uid').uid + 1
+        if LdapUser.objects.exists():
+            next_uid = LdapUser.objects.latest('uid').uid + 1
+            if next_uid > MIN_UID: return next_uid
+        return MIN_UID
 
     def update_groups_membership(self, user, new_groups):
         old_groups = LdapGroup.objects.filter(
@@ -223,7 +227,10 @@ class GroupForm(ModelForm):
 
     def find_next_gid(self):
         # TODO: see find_next_uid() above
-        return LdapGroup.objects.latest('gid').gid + 1
+        if LdapGroup.objects.exists():
+            next_gid = LdapGroup.objects.latest('gid').gid + 1
+            if next_gid > MIN_GID: return next_gid
+        return MIN_GID
 
 class SettingsForm(Form):
     pass
