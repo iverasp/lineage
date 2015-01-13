@@ -100,11 +100,11 @@ class UserForm(ModelForm):
             cleaned_data['email'] = self.make_email_adress(self.instance)
 
         # did we change the primary key? that was stupid...
-        if not cleaned_data.get('username') == unicode(self.instance.username):
-            user = LdapUser.objects.filter(username=self.instance.username).first()
-            user.username = cleaned_data.get('username')
-            user.save()
-            self.instance = user
+        #if not cleaned_data.get('username') == unicode(self.instance.username):
+        #    user = LdapUser.objects.filter(username=self.instance.username).first()
+        #    user.username = cleaned_data.get('username')
+        #    user.save()
+        #    self.instance = user
 
         # update group memeberships
         self.update_groups_membership(self.instance, cleaned_data.get('groups'))

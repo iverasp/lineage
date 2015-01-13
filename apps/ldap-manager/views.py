@@ -89,7 +89,7 @@ def add_user(request):
         if form.is_valid():
             user = form.save(commit=False)
             groups = form.cleaned_data.get('groups')
-            update_groups_membership(user, groups)
+            form.update_groups_membership(user, groups)
             user.save()
             return redirect('user', user.uid)
     context = {
