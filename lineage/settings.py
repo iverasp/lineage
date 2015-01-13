@@ -101,6 +101,11 @@ SHELLS = (
     ('/bin/zsh', 'zsh'),
 )
 
+AUTHENTICATION_BACKENDS = (
+    'django_auth_ldap.backend.LDAPBackend',
+    'django.contrib.auth.backends.ModelBackend',
+)
+
 DATE_INPUT_FORMATS = ['%Y-%m-%d',      # '2006-10-25'
                       '%m/%d/%Y',       # '10/25/2006'
                       '%m/%d/%y']
