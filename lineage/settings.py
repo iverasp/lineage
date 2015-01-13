@@ -75,6 +75,10 @@ MIDDLEWARE_CLASSES = (
 
 ROOT_URLCONF = 'lineage.urls'
 
+STATICFILES_DIRS = (
+    os.path.join(BASE_DIR, "static"),
+)
+
 STATIC_URL = '/static/'
 
 TEMPLATE_DIRS = (
