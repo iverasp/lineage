@@ -1,7 +1,7 @@
 from django.http import HttpResponse
 from django.template import RequestContext
 from django.shortcuts import render_to_response, redirect
-from models import LdapGroup, LdapUser, LdapNode
+from models import LdapGroup, LdapUser, LdapOrgUnit
 from forms import *
 from app_settings import DEFAULT_HOME, DEFAULT_EMAIL
 from string import Template
@@ -10,7 +10,7 @@ from tables import UsersTable, GroupsTable
 
 def initial(request):
 
-    nodes = LdapNode.objects.all()
+    nodes = LdapOrgUnit.objects.all()
     print nodes
 
     #groups = LdapOrgUnit(name="groups")
