@@ -1,15 +1,12 @@
 Django==1.7.1
-distribute==0.6.32
 django-bootstrap3==5.0.2
 django-ldapdb==0.3.2
 django-password-strength==1.1.1
 django-tables2==0.15.0
 django-tastypie==0.12.1
-mercurial==2.7.1
 passlib==1.6.2
 python-dateutil==2.2
 python-ldap==2.4.10
 python-mimeparse==0.1.4
-redis==2.10.3
 six==1.8.0
 wsgiref==0.1.2

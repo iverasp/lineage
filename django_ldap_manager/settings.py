@@ -1,18 +1,13 @@
 import os
 import ldap
 
-DEBUG = True
+DEBUG = False
 TEMPLATE_DEBUG = DEBUG
 
 BASE_DIR = os.path.dirname(os.path.dirname(__file__))
 PROJECT_SETTINGS_DIRECTORY = os.path.dirname(globals()['__file__'])
 PROJECT_ROOT_DIRECTORY = os.path.join(PROJECT_SETTINGS_DIRECTORY, '..', '..')
 
-try:
-    from local_settings import *
-except ImportError as e:
-    print(e)
-    pass
 
 DATABASE_ROUTERS = ['ldapdb.router.Router']
 
@@ -23,7 +18,7 @@ DATABASE_ROUTERS = ['ldapdb.router.Router']
 # timezone as the operating system.
 # If running in a Windows environment this must be set to the same as your
 # system time zone.
-TIME_ZONE = 'America/Chicago'
+TIME_ZONE = 'Europe/Oslo'
 
 # Language code for this installation. All choices can be found here:
 # http://www.i18nguy.com/unicode/language-identifiers.html
@@ -78,7 +73,7 @@ MIDDLEWARE_CLASSES = (
     'django.contrib.messages.middleware.MessageMiddleware',
 )
 
-ROOT_URLCONF = 'django-ldap-manager.urls'
+ROOT_URLCONF = 'django_ldap_manager.urls'
 
 STATIC_URL = '/static/'
 
@@ -99,3 +94,19 @@ INSTALLED_APPS = (
     'tastypie',
     'django_password_strength',
 )
+
+SHELLS = (
+    ('/bin/false', 'false'),
+    ('/bin/bash', 'bash'),
+    ('/bin/zsh', 'zsh'),
+)
+
+DATE_INPUT_FORMATS = ['%Y-%m-%d',      # '2006-10-25'
+                      '%m/%d/%Y',       # '10/25/2006'
+                      '%m/%d/%y']
+
+try:
+    from local_settings import *
+except ImportError as e:
+    print(e)
+    pass
