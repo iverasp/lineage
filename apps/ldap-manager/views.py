@@ -10,13 +10,16 @@ from tables import UsersTable, GroupsTable
 
 def initial(request):
 
-    nodes = LdapOrgUnit.objects.all()
-    print nodes
+    if not LdapOrgUnit.objects.filter(name="groups"):
+        groups = LdapOrgUnit(name="groups")
+        groups.save()
+        print "made node groups"
 
-    #groups = LdapOrgUnit(name="groups")
-    #groups.save()
-    #people = LdapOrgUnit(name="people")
-    #people.save()
+    if not LdapOrgUnit.objects.filter(name="people"):
+        print "yolo"
+        groups = LdapOrgUnit(name="people")
+        groups.save()
+        print "made node people"
 
     return render_to_response(
         'initial.html',
