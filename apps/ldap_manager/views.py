@@ -1,6 +1,6 @@
 from django.http import HttpResponse
 from django.template import RequestContext
-from django.shortcuts import render_to_response, redirect
+from django.shortcuts import redirect, render
 from models import LdapGroup, LdapUser, LdapOrgUnit
 from forms import *
 from lineage.settings import DEFAULT_HOME, DEFAULT_EMAIL
@@ -21,29 +21,16 @@ def initial(request):
         groups.save()
         print "made node people"
 
-    return render_to_response(
-        'initial.html',
-        context_instance=RequestContext(request)
-    )
+    return render(request, "initial.html")
 
 def index(request):
-    return render_to_response(
-        'index.html',
-        context_instance=RequestContext(request)
-    )
+    return render(request, 'index.html')
 
 def users(request):
     context = {}
     table = UsersTable(LdapUser.objects.all())
     RequestConfig(request).configure(table)
-    context = {
-        'table': table,
-    }
-    return render_to_response(
-        'users.html',
-        context,
-        context_instance=RequestContext(request)
-    )
+    return render(request, 'users.html', {'table':table})
 
 def user(request, username):
     user = LdapUser.objects.filter(username=username).first()
@@ -81,11 +68,7 @@ def user(request, username):
         'form': form,
         'update_password_form': update_password_form,
     }
-    return render_to_response(
-        'user.html',
-        context,
-        context_instance=RequestContext(request)
-    )
+    return render(request, 'user.html', context)
 
 def change_password(request, uid):
     if request.method == 'POST':
@@ -112,11 +95,7 @@ def add_user(request):
     context = {
         'form': form,
     }
-    return render_to_response(
-        'user.html',
-        context,
-        context_instance=RequestContext(request)
-    )
+    return render(request, 'user.html', context)
 
 def groups(request):
     context = {}
@@ -125,11 +104,7 @@ def groups(request):
     context = {
         'table': table,
     }
-    return render_to_response(
-        'groups.html',
-        context,
-        context_instance=RequestContext(request)
-    )
+    return render(request, 'groups.html', context)
 
 def group(request, name):
     group = LdapGroup.objects.filter(name=name).first()
@@ -154,11 +129,7 @@ def group(request, name):
         'group': group,
         'form': form,
     }
-    return render_to_response(
-        'group.html',
-        context,
-        context_instance=RequestContext(request)
-    )
+    return render(request, 'groups.html', context)
 
 def add_group(request):
     form = GroupForm()
@@ -174,11 +145,7 @@ def add_group(request):
     context = {
         'form': form,
     }
-    return render_to_response(
-        'group.html',
-        context,
-        context_instance=RequestContext(request)
-    )
+    return render(request, 'group.html', context)
 
 def sudoers(request):
     pass
@@ -188,11 +155,7 @@ def settings(request):
     context = {
         'form': form,
     }
-    return render_to_response(
-        'settings.html',
-        context,
-        context_instance=RequestContext(request)
-    )
+    return render(request, 'settings.html', context)
 
 def make_home_path(user):
     return DEFAULT_HOME.safe_substitute(username=user.username)
