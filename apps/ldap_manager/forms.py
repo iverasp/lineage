@@ -2,7 +2,8 @@ from django.forms import ModelForm, ModelChoiceField, \
     ModelMultipleChoiceField, BooleanField, ChoiceField, Form, CharField, \
     PasswordInput, IntegerField
 from models import LdapUser, LdapGroup
-from lineage.settings import SHELLS, DEFAULT_HOME, DEFAULT_EMAIL
+from lineage.settings import SHELLS, DEFAULT_HOME, DEFAULT_EMAIL, \
+    MIN_UID, MIN_GID
 from django.core.exceptions import ValidationError
 from django_password_strength.widgets import PasswordStrengthInput, \
     PasswordConfirmationInput
@@ -123,7 +124,13 @@ class UserForm(ModelForm):
 
     def find_next_uid(self):
         # TODO: execute external script to find next UID
-        return unicode(4333)
+        # Or do the following: find the LdapUser with the highest
+        # UID and add one
+        # In that case: TODO: find unused UID if a user has been deleted
+        if LdapUser.objects.exists():
+            next_uid = LdapUser.objects.latest('uid').uid + 1
+            if next_uid > MIN_UID: return next_uid
+        return MIN_UID
 
     def update_groups_membership(self, user, new_groups):
         old_groups = LdapGroup.objects.filter(
@@ -204,9 +211,26 @@ class GroupForm(ModelForm):
         for f in GroupForm.base_fields.values():
             f.widget.attrs['class'] = 'form-control'
 
+    def clean(self):
+        cleaned_data = super(GroupForm, self).clean()
+
+        # GID related stuff goes here
+        if cleaned_data.get('auto_gid'):
+            # if we have a GID it does not need changing
+            if self.instance.gid > 0:
+                cleaned_data['gid'] = unicode(self.instance.gid)
+            # if we don't have a UID it means we're a new user
+            else:
+                cleaned_data['gid'] = self.find_next_gid()
+
+        return cleaned_data
+
     def find_next_gid(self):
-        # TODO: execute external script to find next GID
-        return unicode(4002)
+        # TODO: see find_next_uid() above
+        if LdapGroup.objects.exists():
+            next_gid = LdapGroup.objects.latest('gid').gid + 1
+            if next_gid > MIN_GID: return next_gid
+        return MIN_GID
 
 class SettingsForm(Form):
     pass

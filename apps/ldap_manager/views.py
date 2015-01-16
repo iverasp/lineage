@@ -102,6 +102,7 @@ def add_user(request):
     form = UserForm()
     if request.method == 'POST':
         form = UserForm(data=request.POST)
+        print form.data
         if not form.is_valid():
             print form.errors
         if form.is_valid():
