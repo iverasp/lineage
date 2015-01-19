@@ -29,9 +29,15 @@ DATABASES = {
 
 BASE_DN="dc=herpderp,dc=no"
 
+MIN_UID = 2000
+MIN_GID = 2000
 
-SHELLS += (
-       # Add additional shells on ('/bin/false', 'false') form
+ADDITIONAL_SHELLS= (
+
+    # Add additional shells with syntax
+    # ('/path/to/shell', 'name'),
+
+    ('/bin/zsh', 'zsh'),
 )
 
 from string import Template

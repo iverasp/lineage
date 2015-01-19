@@ -99,10 +99,9 @@ INSTALLED_APPS = (
     'django_password_strength',
 )
 
-SHELLS = (
+DEFAULT_SHELLS = (
     ('/bin/false', 'false'),
     ('/bin/bash', 'bash'),
-    ('/bin/zsh', 'zsh'),
 )
 
 AUTHENTICATION_BACKENDS = (
@@ -116,6 +115,8 @@ DATE_INPUT_FORMATS = ['%Y-%m-%d',      # '2006-10-25'
 
 try:
     from local_settings import *
+    SHELLS = DEFAULT_SHELLS + ADDITIONAL_SHELLS
 except ImportError as e:
     print(e)
+    SHELLS = DEFAULT_SHELLS
     pass
