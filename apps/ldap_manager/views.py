@@ -27,7 +27,6 @@ def index(request):
     return render(request, 'index.html')
 
 def users(request):
-    context = {}
     table = UsersTable(LdapUser.objects.all())
     RequestConfig(request).configure(table)
     return render(request, 'users.html', {'table':table})
@@ -98,13 +97,9 @@ def add_user(request):
     return render(request, 'user.html', context)
 
 def groups(request):
-    context = {}
     table = GroupsTable(LdapGroup.objects.all())
     RequestConfig(request).configure(table)
-    context = {
-        'table': table,
-    }
-    return render(request, 'groups.html', context)
+    return render(request, 'groups.html', {'table': table})
 
 def group(request, name):
     group = LdapGroup.objects.filter(name=name).first()
@@ -129,7 +124,7 @@ def group(request, name):
         'group': group,
         'form': form,
     }
-    return render(request, 'groups.html', context)
+    return render(request, 'group.html', context)
 
 def add_group(request):
     form = GroupForm()
