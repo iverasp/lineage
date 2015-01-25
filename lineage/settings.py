@@ -99,6 +99,8 @@ INSTALLED_APPS = (
     'django_password_strength',
 )
 
+LOGIN_URL = '/admin'
+
 DEFAULT_SHELLS = (
     ('/bin/false', 'false'),
     ('/bin/bash', 'bash'),
