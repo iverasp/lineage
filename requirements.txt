@@ -1,5 +1,6 @@
 Django==1.7.1
 django-bootstrap3==5.0.2
+django-auth-ldap==1.2.4
 django-ldapdb==0.3.2
 django-password-strength==1.1.1
 django-tables2==0.15.0
