@@ -1,6 +1,7 @@
 from django.http import HttpResponse
 from django.template import RequestContext
 from django.shortcuts import redirect, render
+from django.contrib.auth.decorators import login_required, user_passes_test
 from models import LdapGroup, LdapUser, LdapOrgUnit
 from forms import *
 from lineage.settings import DEFAULT_HOME, DEFAULT_EMAIL
@@ -8,6 +9,8 @@ from string import Template
 from django_tables2 import RequestConfig
 from tables import UsersTable, GroupsTable
 
+@login_required
+@user_passes_test(lambda u: u.is_staff())
 def initial(request):
 
     if not LdapOrgUnit.objects.filter(name="groups"):
@@ -26,11 +29,15 @@ def initial(request):
 def index(request):
     return render(request, 'index.html')
 
+@login_required
+@user_passes_test(lambda u: u.is_staff)
 def users(request):
     table = UsersTable(LdapUser.objects.all())
     RequestConfig(request).configure(table)
     return render(request, 'users.html', {'table':table})
 
+@login_required
+@user_passes_test(lambda u: u.is_staff)
 def user(request, username):
     user = LdapUser.objects.filter(username=username).first()
     if not user:
@@ -69,6 +76,8 @@ def user(request, username):
     }
     return render(request, 'user.html', context)
 
+@login_required
+@user_passes_test(lambda u: u.is_staff)
 def change_password(request, uid):
     if request.method == 'POST':
         form = UpdatePasswordForm(data=request.POST)
@@ -80,6 +89,8 @@ def change_password(request, uid):
     else:
         return redirect('user', uid)
 
+@login_required
+@user_passes_test(lambda u: u.is_staff)
 def add_user(request):
     form = UserForm()
     if request.method == 'POST':
@@ -96,11 +107,15 @@ def add_user(request):
     }
     return render(request, 'user.html', context)
 
+@login_required
+@user_passes_test(lambda u: u.is_staff)
 def groups(request):
     table = GroupsTable(LdapGroup.objects.all())
     RequestConfig(request).configure(table)
     return render(request, 'groups.html', {'table': table})
 
+@login_required
+@user_passes_test(lambda u: u.is_staff)
 def group(request, name):
     group = LdapGroup.objects.filter(name=name).first()
     if not group:
@@ -126,6 +141,8 @@ def group(request, name):
     }
     return render(request, 'group.html', context)
 
+@login_required
+@user_passes_test(lambda u: u.is_staff)
 def add_group(request):
     form = GroupForm()
     if request.method == 'POST':
@@ -142,9 +159,13 @@ def add_group(request):
     }
     return render(request, 'group.html', context)
 
+@login_required
+@user_passes_test(lambda u: u.is_staff)
 def sudoers(request):
     pass
 
+@login_required
+@user_passes_test(lambda u: u.is_staff)
 def settings(request):
     form = SettingsForm()
     context = {
