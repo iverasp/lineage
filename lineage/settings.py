@@ -6,7 +6,7 @@ TEMPLATE_DEBUG = DEBUG
 
 BASE_DIR = os.path.dirname(os.path.dirname(__file__))
 PROJECT_SETTINGS_DIRECTORY = os.path.dirname(globals()['__file__'])
-PROJECT_ROOT_DIRECTORY = os.path.join(PROJECT_SETTINGS_DIRECTORY, '..', '..')
+PROJECT_ROOT_DIRECTORY = os.path.join(PROJECT_SETTINGS_DIRECTORY, '..')
 
 
 DATABASE_ROUTERS = ['ldapdb.router.Router']
@@ -80,6 +80,7 @@ STATICFILES_DIRS = (
 )
 
 STATIC_URL = '/static/'
+STATIC_ROOT = os.path.join(PROJECT_ROOT_DIRECTORY, 'collected_static')
 
 TEMPLATE_DIRS = (
     os.path.join(BASE_DIR, 'templates/'),
@@ -118,6 +119,7 @@ DATE_INPUT_FORMATS = ['%Y-%m-%d',      # '2006-10-25'
 try:
     from local_settings import *
     SHELLS = DEFAULT_SHELLS + ADDITIONAL_SHELLS
+    print(BASE_DN)
 except ImportError as e:
     print(e)
     SHELLS = DEFAULT_SHELLS
