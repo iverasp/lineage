@@ -3,7 +3,8 @@ from django.template import RequestContext
 from django.shortcuts import redirect, render
 from django.contrib.auth.decorators import login_required, user_passes_test
 from apps.ldap_manager.models import LdapGroup, LdapUser, LdapOrgUnit
-from apps.ldap_manager.forms import *
+from apps.ldap_manager.forms.user import *
+from apps.ldap_manager.forms.group import *
 from lineage.settings import DEFAULT_HOME, DEFAULT_EMAIL
 from string import Template
 from django_tables2 import RequestConfig
