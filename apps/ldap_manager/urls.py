@@ -20,11 +20,14 @@ urlpatterns = patterns(
     url(r'^initial/', 'index.initial', name='initial'),
     url(r'^users/', 'lists.users', name='users'),
     url(r'^groups/', 'lists.groups', name='groups'),
-    url(r'^add_user/', 'edit.add_user', name='add_user'),
-    url(r'^add_group/', 'edit.add_group', name='add_group'),
+    url(r'^add/user/', 'add.add_user', name='add_user'),
+    url(r'^add/group/', 'add.add_group', name='add_group'),
     url(r'^change_password/(?P<uid>\w{0,50})/$', 'edit.change_password', name='change_password'),
-    url(r'^user/(?P<username>\w{0,50})/$', 'detail.user', name='user'),
-    url(r'^group/(?P<name>\w{0,50})/$', 'detail.group', name='group'),
+    url(r'^edit/user/(?P<username>\w{0,50})/$', 'edit.user', name='user'),
+    url(r'^edit/group/(?P<name>\w{0,50})/$', 'edit.group', name='group'),
+    url(r'^detail/user/(?P<username>\w{0,50})/$', 'detail.user', name='user'),
+    url(r'^detail/group/(?P<name>\w{0,50})/$', 'detail.group', name='group'),
+    url(r'^api/', include(rest_api.urls)),
     url(r'^api/', include(rest_api.urls)),
 
 )
