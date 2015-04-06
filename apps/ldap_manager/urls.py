@@ -16,15 +16,15 @@ admin.autodiscover()
 
 urlpatterns = patterns(
     'apps.ldap_manager.views',
-    url(r'^$', 'index', name='index'),
-    url(r'^initial/', 'initial', name='initial'),
-    url(r'^users/', 'users', name='users'),
-    url(r'^groups/', 'groups', name='groups'),
-    url(r'^add_user/', 'add_user', name='add_user'),
-    url(r'^add_group/', 'add_group', name='add_group'),
-    url(r'^change_password/(?P<uid>\w{0,50})/$', 'change_password', name='change_password'),
-    url(r'^user/(?P<username>\w{0,50})/$', 'user', name='user'),
-    url(r'^group/(?P<name>\w{0,50})/$', 'group', name='group'),
+    url(r'^$', 'index.index', name='index'),
+    url(r'^initial/', 'index.initial', name='initial'),
+    url(r'^users/', 'lists.users', name='users'),
+    url(r'^groups/', 'lists.groups', name='groups'),
+    url(r'^add_user/', 'edit.add_user', name='add_user'),
+    url(r'^add_group/', 'edit.add_group', name='add_group'),
+    url(r'^change_password/(?P<uid>\w{0,50})/$', 'edit.change_password', name='change_password'),
+    url(r'^user/(?P<username>\w{0,50})/$', 'detail.user', name='user'),
+    url(r'^group/(?P<name>\w{0,50})/$', 'detail.group', name='group'),
     url(r'^api/', include(rest_api.urls)),
 
 )
