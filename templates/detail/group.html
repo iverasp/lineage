@@ -1,0 +1,80 @@
+{% extends 'base.html' %}
+{% block head %}
+<script>
+$(window).on('load', function () {
+  {% if form.errors %}
+  {% for field in form %}
+  {% if field.errors %}
+  $('#{{ field.auto_id }}').parent().addClass('has-error');
+  {% endif %}
+  {% endfor %}
+  {% endif %}
+});
+</script>
+{% endblock head %}
+
+{% block content %}
+
+<div class="container-liquid">
+
+  <form class="form-horizontal" role="form" method="post" action="">
+    {% csrf_token %}
+
+    {% if form.errors %}
+    <div class="alert alert-danger">
+      <button type="button" class="close" data-dismiss="alert">×</button>
+      {% for field in form %}
+      {% if field.errors %}
+      <li style="list-style-type:none;">{{field.name }}: {{ field.errors|striptags }}</li>
+      {% endif %}
+      {% endfor %}
+    </div>
+    {% endif %}
+
+    <div class="col-sm-6">
+
+      <div class="row">
+        <div class="form-group">
+          <label class="col-sm-3 control-label" for="id_name">Name</label>
+          <div class="col-sm-9">{{ form.name }}</div>
+        </div>
+      </div>
+
+      <div class="row">
+        <div class="form-group row">
+          <label class="col-sm-3 control-label" for="id_gid">GID</label>
+          <div class="col-sm-7">{{ form.gid }}</div>
+          <!-- col size below messes up layout -->
+          <div class="col-sm-2">
+            <div data-toggle="buttons">
+              <label class="btn btn-default control-label pull-right" for="id_auto_gid">
+                {{ form.auto_gid }} Auto
+              </label>
+            </div>
+          </div>
+        </div>
+      </div>
+
+    </div> <!-- end first column -->
+
+    <div class="col-sm-6">
+
+      <div class="row">
+        <div class="form-group">
+          <label class="col-sm-4 control-label" for="id_usernames">Members</label>
+          <!- - make as high as the rest of the div - ->
+          <div class="col-sm-8">{{ form.usernames }}</div>
+        </div>
+      </div>
+
+    </div> <!-- end second column -->
+
+    <div class="col-sm-12">
+      <div class="form-group">
+        <input class="btn btn-default pull-right" type="submit" value="Submit" />
+      </div>
+    </div>
+  </form>
+</div>
+
+{% endblock content %}

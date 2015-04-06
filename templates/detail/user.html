@@ -1,0 +1,218 @@
+{% extends 'base.html' %}
+{% block head %}
+{% endblock head %}
+
+{% block content %}
+<derp>
+{{ u }}
+</derp>
+
+<div class="container-liquid">
+
+    <div class="col-sm-12">
+      <div class="row">
+        <div class="col-sm-2">
+
+          <div id="id_dropzone">
+            {{ u.photo.as_hidden }}
+            <div class="fallback">
+              {% if not u.photo.value %}
+              <img class="img-rounded" width="100" height="100" src="/static/img/default_profile.png"/>
+              {% else %}
+              <img class="img-rounded" width="100" height="100" src="data:image/jpeg;base64, {{ u.photo.value }}"/>
+              {% endif %}
+              <i>Javascript needs to be enabled to edit account photo</i>
+            </div>
+          </div>
+
+        </div>
+        <div class="col-sm-10">
+          <h3 id="id_full_name"></h3>
+          {% if user %}
+          <h5>{{ user.dn }}</h5>
+          <a href="javascript:void(0);" onclick="$('#passModal').modal('show'); return;">Change password</a>
+          {% endif %}
+        </div>
+      </div>
+      <hr>
+    </div> <!-- end div for profile summary -->
+
+
+
+    <div class="col-sm-6">
+
+      <div class="row">
+        <div class="form-group">
+          <label class="col-sm-3 control-label" for="id_username">Username</label>
+          <div class="col-sm-9">{{ u.username }}</div>
+        </div>
+      </div>
+
+      <div class="row">
+        <div class="form-group">
+          <label class="col-sm-3 control-label" for="id_first_name">First name</label>
+          <div class="col-sm-9">{{ u.first_name }}</div>
+        </div>
+      </div>
+
+      <div class="row">
+        <div class="form-group">
+          <label class="col-sm-3 control-label" for="id_last_name">Last name</label>
+          <div class="col-sm-9">{{ u.last_name }}</div>
+        </div>
+      </div>
+
+      <div class="row">
+        <div class="form-group row">
+          <label class="col-xs-3 col-sm-3 col-md-3 control-label" for="id_email">Email</label>
+          <div class="col-xs-6 col-sm-6 col-md-7">{{ u.email }}</div>
+          <!-- col size below messes up layout -->
+          <div class="col-xs-3 col-sm-3 col-md-2">
+            <div data-toggle="buttons">
+              <label class="btn btn-default control-label pull-right" for="id_auto_email">
+                {{ u.auto_email }} Auto
+              </label>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="row">
+        <div class="form-group row">
+          <label class="col-xs-3 col-sm-3 col-md-3 control-label" for="id_uid">UID</label>
+          <div class="col-xs-6 col-sm-6 col-md-7">{{ u.uid }}</div>
+          <!-- col size below messes up layout -->
+          <div class="col-xs-3 col-sm-3 col-md-2">
+            <div data-toggle="buttons">
+              <label class="btn btn-default control-label pull-right" for="id_auto_uid">
+                {{ u.auto_uid }} Auto
+              </label>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="row">
+        <div class="form-group">
+          <label class="col-sm-3 control-label" for="id_login_shell">Shell</label>
+          <div class="col-sm-9">{{ u.login_shell }}</div>
+        </div>
+      </div>
+
+      <!-- samba stuff
+      <div class="row">
+        <div class="form-group">
+          <label class="col-sm-3 control-label" for="id_enable_samba">Enable samba</label>
+          <div class="col-sm-9">{{ u.enable_samba }}</div>
+        </div>
+      </div>
+      end samba stuff -->
+
+    </div> <!-- end first column -->
+
+    <div class="col-sm-6">
+
+      <div class="row">
+        <div class="form-group row">
+          <label class="col-xs-3 col-sm-4 col-md-4 control-label" for="id_home_directory">Home</label>
+          <div class="col-xs-6 col-sm-5 col-md-6">{{ u.home_directory }}</div>
+          <!-- col size below messes up layout -->
+          <div class="col-xs-3 col-sm-3 col-md-2">
+            <div data-toggle="buttons">
+              <label class="btn btn-default control-label pull-right" for="id_auto_home">
+                {{ u.auto_home }} Auto
+              </label>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="row">
+        <div class="form-group">
+          <label class="col-sm-4 control-label" for="id_group">Primary group</label>
+          <div class="col-sm-8">{{ u.group }}</div>
+        </div>
+      </div>
+
+      <div class="row">
+        <div class="form-group">
+          <!- - currently only shows correctly on gt 1200px width - ->
+          <label class="col-sm-4 control-label" for="id_groups">Additional groups</label>
+          <div class="col-sm-8">{{ u.groups }}</div>
+        </div>
+      </div>
+
+    </div> <!-- end second column -->
+
+      <div class="col-sm-12">
+        <div class="form-group">
+          <input class="btn btn-default pull-right" type="submit" value="Submit" />
+        </div>
+        <hr>
+      </div>
+
+
+    <div class="col-sm-12">
+      <div class="panel-group" id="accordion">
+        <div class="panel panel-default" id="panel1">
+          <div class="panel-heading">
+            <h4 class="panel-title" data-toggle="collapse" data-target="#collapse-additional" style="cursor:pointer;">
+            Additional information
+        </h4>
+        </div>
+        <div id="collapse-additional" class="panel-collapse collapse in">
+          <div class="panel-body">
+
+          <div class="col-sm-6">
+
+            <div class="row">
+              <div class="form-group">
+                <label class="col-sm-4 control-label" for="id_phone">Phone</label>
+                <div class="col-sm-8">{{ u.phone }}</div>
+              </div>
+            </div>
+
+            <div class="row">
+              <div class="form-group">
+                <label class="col-sm-4 control-label" for="id_mobile_phone">Mobile phone</label>
+                <div class="col-sm-8">{{ u.mobile_phone }}</div>
+              </div>
+            </div>
+
+            <div class="row">
+              <div class="form-group">
+                <label class="col-sm-4 control-label" for="id_gecos">Gecos</label>
+                <div class="col-sm-8">{{ u.gecos }}</div>
+              </div>
+            </div>
+
+          </div> <!-- end first column -->
+
+          <div class="col-sm-6">
+
+            <div class="row">
+              <div class="form-group">
+                <label class="col-sm-4 control-label" for="id_date_of_birth">Date of birth</label>
+                <div class="col-sm-8">{{ u.date_of_birth }}</div>
+              </div>
+            </div>
+
+            <div class="row">
+              <div class="form-group">
+                <label class="col-sm-4 control-label" for="id_latitude">Latitude</label>
+                <div class="col-sm-8">{{ u.latitude }}</div>
+              </div>
+            </div>
+
+          </div> <!-- end second column -->
+
+          </div> <!-- end panel body -->
+        </div>
+      </div>
+    </div>
+  </div>
+</form>
+
+</div>
+
+{% endblock content %}
